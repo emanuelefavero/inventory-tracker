@@ -26,3 +26,10 @@ An inventory tracking application built with Next.js, Prisma, Clerk, and Shadcn 
   ```
 
 - Open [http://localhost:3000](http://localhost:3000) in your browser to see the application
+
+## Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [Clerk Documentation](https://clerk.com/docs)
+- [Shadcn UI Documentation](https://ui.shadcn.com/docs)
