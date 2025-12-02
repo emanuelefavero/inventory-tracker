@@ -1,0 +1,21 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+
+  "tabWidth": 2,
+  "bracketSpacing": true,
+  "printWidth": 80,
+  "useTabs": false,
+  "arrowParens": "always",
+  "htmlWhitespaceSensitivity": "css",
+  "trailingComma": "all",
+
+  "plugins": [
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "organizeImportsSkipDestructiveCodeActions": true,
+  "tailwindStylesheet": "./src/app/globals.css",
+  "tailwindFunctions": ["tw", "clsx", "cva", "cn", "cx", "twMerge"]
+}
