@@ -33,3 +33,15 @@ An inventory tracking application built with Next.js, Prisma, Clerk, and Shadcn 
 - [Prisma Documentation](https://www.prisma.io/docs/)
 - [Clerk Documentation](https://clerk.com/docs)
 - [Shadcn UI Documentation](https://ui.shadcn.com/docs)
+
+## License
+
+- [MIT](LICENSE.md)
+
+&nbsp;
+
+---
+
+&nbsp;
+
+[**Go To Top &nbsp; ⬆️**](#inventory-tracker)
