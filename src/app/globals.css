@@ -36,6 +36,8 @@
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
   --radius: 0.625rem;
+  --px: 1rem;
+  --py: 0.625rem;
 }
 
 .dark {
@@ -109,6 +111,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --spacing-px: calc(var(--spacing) * 4) /* 1rem = px-4 */;
+  --spacing-py: calc(var(--spacing) * 2.5) /* 0.625rem = py-2.5 */;
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
