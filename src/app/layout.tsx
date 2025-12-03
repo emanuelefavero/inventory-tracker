@@ -1,4 +1,5 @@
 import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
@@ -36,7 +37,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <main className='px-4 py-2.5'>{children}</main>
+          <Main>{children}</Main>
         </ThemeProvider>
       </body>
     </html>
