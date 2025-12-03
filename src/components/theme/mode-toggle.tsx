@@ -1,8 +1,5 @@
 'use client'
 
-import { Moon, Sun } from 'lucide-react'
-import { useTheme } from 'next-themes'
-
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -10,12 +7,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import type { ThemeOption } from '@/types/theme'
+import { Moon, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
 
+// * Menu Theme options
+export const themes = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'system', label: 'System' },
+] as const satisfies ThemeOption[]
+
+// * ModeToggle component
 export function ModeToggle() {
   const { setTheme } = useTheme()
 
   return (
     <DropdownMenu>
+      {/* Menu Trigger */}
       <DropdownMenuTrigger asChild>
         <Button variant='outline' size='icon' className='cursor-pointer'>
           <Sun className='h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90' />
@@ -23,25 +32,18 @@ export function ModeToggle() {
           <span className='sr-only'>Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
+
+      {/* Menu Content */}
       <DropdownMenuContent align='end'>
-        <DropdownMenuItem
-          onClick={() => setTheme('light')}
-          className='cursor-pointer'
-        >
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => setTheme('dark')}
-          className='cursor-pointer'
-        >
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => setTheme('system')}
-          className='cursor-pointer'
-        >
-          System
-        </DropdownMenuItem>
+        {themes.map(({ value, label }) => (
+          <DropdownMenuItem
+            key={`theme-option-${value}`}
+            onClick={() => setTheme(value)}
+            className='cursor-pointer'
+          >
+            {label}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )
