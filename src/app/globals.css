@@ -137,6 +137,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --shadow-primary: 1.5px 1.5px 0px 0px var(--primary-accent);
+}
+
 @layer base {
   * {
     box-sizing: border-box;
