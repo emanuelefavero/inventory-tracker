@@ -155,6 +155,23 @@
     color: var(--foreground);
     font-family: system-ui, Inter, Helvetica, Roboto, sans-serif;
   }
+
+  /* TODO Move to a shared Link component */
+  a {
+    color: var(--link);
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    transition: scale 0.2s ease-in-out;
+
+    &:hover {
+      color: var(--link-hover);
+      text-decoration-line: underline;
+    }
+
+    &:active {
+      scale: 0.97;
+    }
+  }
 }
 
 @layer utilities {

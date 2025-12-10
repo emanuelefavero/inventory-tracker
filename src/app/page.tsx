@@ -24,9 +24,7 @@ export default function Home() {
           placeholder='Ciao'
           className='rounded-lg border border-border bg-input px-2'
         />
-        <a href='#' className='hover:text-link-hover font-semibold text-link'>
-          Test Link
-        </a>
+        <a href='#'>Test Link</a>
       </div>
     </>
   )
