@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { cn } from '@/lib/utils'
 import type { ThemeOption } from '@/types/theme'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -20,7 +21,7 @@ export const themes = [
 
 // * ModeToggle component
 export function ModeToggle() {
-  const { setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
 
   return (
     <DropdownMenu>
@@ -39,7 +40,10 @@ export function ModeToggle() {
           <DropdownMenuItem
             key={`theme-option-${value}`}
             onClick={() => setTheme(value)}
-            className='cursor-pointer'
+            className={cn(
+              'cursor-pointer',
+              theme === value && 'text-link hover:text-link!',
+            )}
           >
             {label}
           </DropdownMenuItem>
