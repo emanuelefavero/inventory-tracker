@@ -1,26 +1,22 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useSyncExternalStore } from 'react'
+
+const emptySubscribe = () => () => {}
 
 /**
- * Hook that returns a function to check if the component is mounted.
+ * Hook to check if the component is mounted.
+ * Uses `useSyncExternalStore` to avoid hydration mismatches without triggering
+ * "setState within effect" warnings or unnecessary effect cycles.
  *
- * @param initialValue Initial value.
- * @return Function that returns `true` only if the component is mounted.
+ * @returns `true` if the component is mounted on the client, `false` otherwise.
  *
  * @example
  * const isMounted = useIsMounted()
- * isMounted() // => true | false
+ * if (isMounted) {}
  */
-export function useIsMounted(initialValue = false): () => boolean {
-  const isMounted = useRef(initialValue)
-  const get = useCallback(() => isMounted.current, [])
-
-  useEffect(() => {
-    isMounted.current = true
-
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
-
-  return get
+export function useIsMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  )
 }
