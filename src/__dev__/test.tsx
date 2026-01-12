@@ -1,5 +1,6 @@
 'use client'
 
+import { LogoIcon } from '@/components/icons/logo-icon'
 import { Button } from '@/components/ui/button'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { Trash2 } from 'lucide-react'
@@ -11,6 +12,8 @@ export function Test() {
 
   return (
     <div className='mt-4 flex flex-wrap gap-2 rounded-2xl border border-foreground/20 p-4'>
+      {/* <LogoIcon className='h-12 w-12' /> */}
+      <LogoIcon className='w-8' />
       <Button variant='outline'>Outline Button</Button>
       <Button className='align-bottom'>Default Button</Button>
       <Button variant='secondary'>Secondary Button</Button>
