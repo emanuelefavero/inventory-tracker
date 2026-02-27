@@ -171,12 +171,3 @@
     }
   }
 }
-
-@layer utilities {
-  mark {
-    background-color: var(--mark);
-    color: inherit;
-    border-radius: 0.25rem;
-    padding-inline: 0.25rem;
-  }
-}
