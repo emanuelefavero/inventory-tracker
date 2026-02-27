@@ -47,3 +47,19 @@ To get the project up and running, follow these steps:
 - **Component Structure:** Components are organized in the `src/components` directory. The `ui` directory contains the Shadcn UI components, the `layout` directory contains the layout components, and the `theme` directory contains the theme-related components.
 
 - **Types:** Types are defined in the `src/types` directory.
+
+## Execution Memory (Mandatory)
+
+Before starting any implementation task, always read:
+
+- `docs/MVP_DASHBOARD_EXECUTION_PLAN.md`
+
+After completing any implementation step, update the same file in the same task before stopping, including:
+
+- Step `Status` changes (`TODO`/`IN_PROGRESS`/`BLOCKED`/`DONE`)
+- `Started on` / `Completed on`
+- `Evidence` and short `Notes`
+- `Next Active Step`
+- `Execution Changelog`
+
+Implementation should proceed one step at a time following the Kanban cards in the execution plan.
