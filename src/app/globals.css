@@ -46,6 +46,9 @@
   --radius: 0.625rem;
   --px: 1rem;
   --py: 0.625rem;
+
+  --font-system-sans: system-ui, sans-serif;
+  --font-system-mono: ui-monospace, Consolas, monospace;
 }
 
 .dark {
@@ -133,8 +136,9 @@
   --spacing-px: calc(var(--spacing) * 4) /* 1rem = px-4 */;
   --spacing-py: calc(var(--spacing) * 2.5) /* 0.625rem = py-2.5 */;
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Fonts */
+  --font-sans: var(--font-system-sans);
+  --font-mono: var(--font-system-mono);
 }
 
 @theme {
@@ -148,12 +152,6 @@
     margin: 0;
     border-color: var(--border);
     outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
-  }
-
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: system-ui, Inter, Helvetica, Roboto, sans-serif;
   }
 
   /* TODO Move to a shared Link component */
