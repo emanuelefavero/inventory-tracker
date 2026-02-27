@@ -4,6 +4,7 @@ import { LogoIcon } from '@/components/icons/logo-icon'
 import { Button } from '@/components/ui/button'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { Trash2 } from 'lucide-react'
+import Link from 'next/link'
 
 export function Test() {
   const isMounted = useIsMounted()
@@ -31,7 +32,7 @@ export function Test() {
         placeholder='Ciao'
         className='rounded-lg border border-border bg-input px-2'
       />
-      <a href='#'>Test Link</a>
+      <Link href='#'>Test Next Link</Link>
     </div>
   )
 }
