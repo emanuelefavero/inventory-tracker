@@ -1,6 +1,6 @@
 # Clerk + Prisma Integration Guide
 
-## 🎉 Setup Complete!
+## 🎉 Setup Complete
 
 Your inventory tracker now uses **Clerk for authentication** and **Prisma for user data management**. Users are automatically created in your database when they sign in via Clerk.
 
