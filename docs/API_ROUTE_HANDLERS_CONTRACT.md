@@ -1,19 +1,16 @@
 # API Design Contract (Route Handlers) - MVP
 
-This document defines the API contract for MVP route handlers in Next.js App Router.
+This document defines the API contract for MVP Route Handlers in Next.js App Router.
 It finalizes endpoint coverage, per-endpoint auth rules, and a standard response shape.
 
 Scope:
 
-- Design only for Step 2.
-- Runtime endpoint implementation is handled in later steps.
-- `zod` runtime validation is intentionally deferred to Step 3.
+- Contract defined in Step 2.
+- Runtime implementation completed after Step 3 validation setup.
 
 ## 1. Routing Surface
 
 All endpoints are private and live under `app/api/**/route.ts`.
-
-Planned routes:
 
 - `GET /api/products`
 - `POST /api/products`
@@ -27,9 +24,6 @@ Planned routes:
 
 ## 2. Standard Response Shape
 
-MVP API responses use a discriminated union `Result` envelope.
-This keeps response handling cohesive in both server and client code.
-
 ```ts
 export type ApiErrorCode =
   | 'AUTH_UNAUTHENTICATED'
@@ -38,6 +32,7 @@ export type ApiErrorCode =
   | 'USER_NOT_FOUND'
   | 'INSUFFICIENT_STOCK'
   | 'INVALID_MOVEMENT_QUANTITY'
+  | 'INVALID_REQUEST_BODY'
   | 'INTERNAL_ERROR'
 
 export type ApiError = {
@@ -53,40 +48,24 @@ export type ApiResult<T> =
 
 Status mapping:
 
-- Success: `200`, `201`, `204` (when no payload is returned, API may still use `200` with lightweight data for consistency).
+- Success: `200`, `201`.
 - Error: `401`, `403`, `404`, `409`, `422`, `500`.
-
-Example JSON responses:
-
-```json
-{ "ok": true, "data": { "items": [] } }
-```
-
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "AUTH_FORBIDDEN",
-    "message": "Admin access required"
-  }
-}
-```
 
 ## 3. Endpoint Matrix (Auth + Role + Contract)
 
-| Method   | Path                      | Auth Required | Role              | Purpose                        | Request Contract                                                                      | Success Response                                                | Error Codes                                                                                                                        |
-| -------- | ------------------------- | ------------- | ----------------- | ------------------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `GET`    | `/api/products`           | Yes           | `USER` or `ADMIN` | List products                  | Query params (optional): `search`, `category`, `sortBy`, `sortOrder`, `page`, `limit` | `ApiResult<{ items: ProductSummary[]; pageInfo: PageInfo }>`    | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INTERNAL_ERROR`                                                                         |
-| `POST`   | `/api/products`           | Yes           | `ADMIN`           | Create product                 | Body: `{ sku, name, category, quantity? }`                                            | `ApiResult<{ product: ProductDetail }>`                         | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INTERNAL_ERROR`                                                                         |
-| `PATCH`  | `/api/products/:id`       | Yes           | `ADMIN`           | Update product                 | Body (partial): `{ sku?, name?, category?, quantity? }`                               | `ApiResult<{ product: ProductDetail }>`                         | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `PRODUCT_NOT_FOUND`, `INTERNAL_ERROR`                                                    |
-| `DELETE` | `/api/products/:id`       | Yes           | `ADMIN`           | Delete product                 | No body                                                                               | `ApiResult<{ deleted: true; id: string }>`                      | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `PRODUCT_NOT_FOUND`, `INTERNAL_ERROR`                                                    |
-| `GET`    | `/api/movements`          | Yes           | `USER` or `ADMIN` | List movement history          | Query params (optional): `type`, `from`, `to`, `userId`, `productId`, `page`, `limit` | `ApiResult<{ items: MovementItem[]; pageInfo: PageInfo }>`      | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INTERNAL_ERROR`                                                                         |
-| `POST`   | `/api/movements/checkout` | Yes           | `USER` or `ADMIN` | Checkout inventory (`OUT`)     | Body: `{ productId, quantity }`                                                       | `ApiResult<{ movement: MovementItem; product: ProductDetail }>` | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `PRODUCT_NOT_FOUND`, `INVALID_MOVEMENT_QUANTITY`, `INSUFFICIENT_STOCK`, `INTERNAL_ERROR` |
-| `POST`   | `/api/movements/return`   | Yes           | `USER` or `ADMIN` | Return inventory (`IN`)        | Body: `{ productId, quantity }`                                                       | `ApiResult<{ movement: MovementItem; product: ProductDetail }>` | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `PRODUCT_NOT_FOUND`, `INVALID_MOVEMENT_QUANTITY`, `INTERNAL_ERROR`                       |
-| `GET`    | `/api/users`              | Yes           | `ADMIN`           | List users for role management | Query params (optional): `search`, `role`, `page`, `limit`                            | `ApiResult<{ items: UserSummary[]; pageInfo: PageInfo }>`       | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INTERNAL_ERROR`                                                                         |
-| `PATCH`  | `/api/users/:id/role`     | Yes           | `ADMIN`           | Update user role               | Body: `{ role: 'USER'                                                                 | 'ADMIN' }`                                                      | `ApiResult<{ user: UserSummary }>`                                                                                                 | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `USER_NOT_FOUND`, `INTERNAL_ERROR` |
+| Method   | Path                      | Auth Required | Role              | Purpose                        | Request Contract                                                                      | Success Response                                                | Error Codes                                                                                                                                                |
+| -------- | ------------------------- | ------------- | ----------------- | ------------------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET`    | `/api/products`           | Yes           | `USER` or `ADMIN` | List products                  | Query params (optional): `search`, `category`, `sortBy`, `sortOrder`, `page`, `limit` | `ApiResult<{ items: ProductSummary[]; pageInfo: PageInfo }>`    | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INTERNAL_ERROR`                                                                                                 |
+| `POST`   | `/api/products`           | Yes           | `ADMIN`           | Create product                 | Body: `{ sku, name, category, quantity? }`                                            | `ApiResult<{ product: ProductDetail }>`                         | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INVALID_REQUEST_BODY`, `INTERNAL_ERROR`                                                                         |
+| `PATCH`  | `/api/products/:id`       | Yes           | `ADMIN`           | Update product                 | Body (partial): `{ sku?, name?, category?, quantity? }`                               | `ApiResult<{ product: ProductDetail }>`                         | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INVALID_REQUEST_BODY`, `PRODUCT_NOT_FOUND`, `INTERNAL_ERROR`                                                    |
+| `DELETE` | `/api/products/:id`       | Yes           | `ADMIN`           | Delete product                 | No body                                                                               | `ApiResult<{ deleted: true; id: string }>`                      | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `PRODUCT_NOT_FOUND`, `INTERNAL_ERROR`                                                                            |
+| `GET`    | `/api/movements`          | Yes           | `USER` or `ADMIN` | List movement history          | Query params (optional): `type`, `from`, `to`, `userId`, `productId`, `page`, `limit` | `ApiResult<{ items: MovementItem[]; pageInfo: PageInfo }>`      | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INTERNAL_ERROR`                                                                                                 |
+| `POST`   | `/api/movements/checkout` | Yes           | `USER` or `ADMIN` | Checkout inventory (`OUT`)     | Body: `{ productId, quantity }`                                                       | `ApiResult<{ movement: MovementItem; product: ProductDetail }>` | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `PRODUCT_NOT_FOUND`, `INVALID_MOVEMENT_QUANTITY`, `INVALID_REQUEST_BODY`, `INSUFFICIENT_STOCK`, `INTERNAL_ERROR` |
+| `POST`   | `/api/movements/return`   | Yes           | `USER` or `ADMIN` | Return inventory (`IN`)        | Body: `{ productId, quantity }`                                                       | `ApiResult<{ movement: MovementItem; product: ProductDetail }>` | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `PRODUCT_NOT_FOUND`, `INVALID_MOVEMENT_QUANTITY`, `INVALID_REQUEST_BODY`, `INTERNAL_ERROR`                       |
+| `GET`    | `/api/users`              | Yes           | `ADMIN`           | List users for role management | Query params (optional): `search`, `role`, `page`, `limit`                            | `ApiResult<{ items: UserSummary[]; pageInfo: PageInfo }>`       | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INTERNAL_ERROR`                                                                                                 |
+| `PATCH`  | `/api/users/:id/role`     | Yes           | `ADMIN`           | Update user role               | Body: `{ role: 'USER' \| 'ADMIN' }`                                                   | `ApiResult<{ user: UserSummary }>`                              | `AUTH_UNAUTHENTICATED`, `AUTH_FORBIDDEN`, `INVALID_REQUEST_BODY`, `USER_NOT_FOUND`, `INTERNAL_ERROR`                                                       |
 
-## 4. Shared Contract Types (Design-Level)
+## 4. Shared Contract Types
 
 ```ts
 export type PageInfo = {
@@ -137,20 +116,19 @@ export type UserSummary = {
 
 - Every failure response must use `ApiResult<never>` with `ok: false`.
 - `error.code` must be one of `ApiErrorCode`.
-- `error.message` is human-readable and safe for UI to display.
-- `error.details` is optional for debugging and field-level context.
-- HTTP status and `error.code` must be aligned (no mismatched combinations).
+- `error.message` is safe for UI display.
+- `error.details` is optional for extra context.
+- HTTP status and `error.code` must remain aligned.
 
-## 7. Validation Strategy (Deferred to Step 3)
+## 7. Validation Strategy
 
-- Step 2 defines payload contracts only.
-- Step 3 will implement runtime validation with `zod`.
-- Planned validation failures should map to:
-  - `422 INVALID_MOVEMENT_QUANTITY` for checkout/return quantity issues.
-  - Additional `422` validation codes can be introduced in Step 3 if needed.
+- Mutating endpoints use `zod` schemas.
+- Validation failures map to:
+  - `422 INVALID_MOVEMENT_QUANTITY` for checkout/return quantity constraints.
+  - `422 INVALID_REQUEST_BODY` for other malformed or invalid payloads.
 
-## 8. Implementation Notes for Next Steps
+## 8. Implementation Notes
 
-- Step 3: add `zod` schemas for all mutating endpoints (`POST`, `PATCH`, `DELETE` as needed).
-- Step 4+: implement route handlers at `src/app/api/**/route.ts` using this contract.
-- Keep DB writes for checkout/return atomic in Step 5.
+- Route handlers implemented at `src/app/api/**/route.ts`.
+- Shared response/error/validation helpers are in `src/lib/api`.
+- Checkout and return writes are atomic (`prisma.$transaction`).

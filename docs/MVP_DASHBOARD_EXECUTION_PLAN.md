@@ -29,7 +29,7 @@ For every step card below, maintain the following fields:
 
 ## Next Active Step
 
-- `Step 3 — Validation Layer (\`zod\`)`
+- `Step 4 — Products CRUD (Admin)`
 
 ---
 
@@ -71,18 +71,33 @@ For every step card below, maintain the following fields:
   - Finalized endpoint matrix for products, movements, users, and role updates using Next.js Route Handlers scope.
   - Defined per-endpoint auth and RBAC requirements aligned with `requireAuth`/`requireAdmin`.
   - Standardized API response contract around a TypeScript discriminated union (`ApiResult<T>`) with app-level error codes.
+  - Normalized Markdown table rendering for the endpoint matrix to ensure correct row/column parsing in docs.
 
 #### Step 3 — Validation Layer (`zod`)
 
-- **Status**: TODO
-- **Owner**:
-- **Started on**:
-- **Completed on**:
+- **Status**: DONE
+- **Owner**: Codex + Emanuele
+- **Started on**: 2026-03-03
+- **Completed on**: 2026-03-03
 - **Acceptance Criteria**:
   - Mutating endpoints validate payloads with `zod`.
   - Validation errors are user-friendly and consistent.
 - **Evidence**:
+  - `src/lib/api/schemas.ts`
+  - `src/lib/api/validation.ts`
+  - `src/lib/api/errors.ts`
+  - `src/lib/api/response.ts`
+  - `src/lib/api/types.ts`
+  - `src/app/api/products/route.ts`
+  - `src/app/api/products/[id]/route.ts`
+  - `src/app/api/movements/checkout/route.ts`
+  - `src/app/api/movements/return/route.ts`
+  - `src/app/api/users/[id]/role/route.ts`
+  - `docs/API_ROUTE_HANDLERS_CONTRACT.md`
 - **Notes**:
+  - Added shared `zod` schemas and parser helpers for all mutating endpoint payloads.
+  - Standardized validation/error envelopes using discriminated union `ApiResult<T>` and app error codes.
+  - Implemented Route Handlers with validation already applied, including atomic checkout/return DB transactions.
 
 ### Sprint 1
 
@@ -194,3 +209,5 @@ For every step card below, maintain the following fields:
 - 2026-02-27: Initial execution plan created and approved scope captured.
 - 2026-03-02: Completed Step 1 (RBAC Contract + User Flows) and advanced Next Active Step to Step 2 (API Design).
 - 2026-03-02: Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
+- 2026-03-03: Completed Step 3 (Validation Layer with zod) and implemented API Route Handlers with standardized Result/error responses.
+- 2026-03-03: Corrected malformed endpoint matrix Markdown table in API contract doc while preserving endpoint contracts.
