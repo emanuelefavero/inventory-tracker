@@ -29,7 +29,7 @@ For every step card below, maintain the following fields:
 
 ## Next Active Step
 
-- `Step 2 — API Design (Route Handlers)`
+- `Step 3 — Validation Layer (\`zod\`)`
 
 ---
 
@@ -56,16 +56,21 @@ For every step card below, maintain the following fields:
 
 #### Step 2 — API Design (Route Handlers)
 
-- **Status**: TODO
-- **Owner**:
-- **Started on**:
-- **Completed on**:
+- **Status**: DONE
+- **Owner**: Codex + Emanuele
+- **Started on**: 2026-03-02
+- **Completed on**: 2026-03-02
 - **Acceptance Criteria**:
   - Endpoint matrix finalized for products, movements, and role updates.
   - Auth/role requirement defined per endpoint.
   - Standard error response shape documented.
 - **Evidence**:
+  - `docs/API_ROUTE_HANDLERS_CONTRACT.md`
+  - `docs/MVP_DASHBOARD_EXECUTION_PLAN.md`
 - **Notes**:
+  - Finalized endpoint matrix for products, movements, users, and role updates using Next.js Route Handlers scope.
+  - Defined per-endpoint auth and RBAC requirements aligned with `requireAuth`/`requireAdmin`.
+  - Standardized API response contract around a TypeScript discriminated union (`ApiResult<T>`) with app-level error codes.
 
 #### Step 3 — Validation Layer (`zod`)
 
@@ -188,3 +193,4 @@ For every step card below, maintain the following fields:
 
 - 2026-02-27: Initial execution plan created and approved scope captured.
 - 2026-03-02: Completed Step 1 (RBAC Contract + User Flows) and advanced Next Active Step to Step 2 (API Design).
+- 2026-03-02: Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
