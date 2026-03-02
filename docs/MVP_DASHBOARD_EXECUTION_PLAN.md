@@ -29,7 +29,7 @@ For every step card below, maintain the following fields:
 
 ## Next Active Step
 
-- `Step 1 — RBAC Contract + User Flows`
+- `Step 2 — API Design (Route Handlers)`
 
 ---
 
@@ -39,16 +39,20 @@ For every step card below, maintain the following fields:
 
 #### Step 1 — RBAC Contract + User Flows
 
-- **Status**: TODO
-- **Owner**:
-- **Started on**:
-- **Completed on**:
+- **Status**: DONE
+- **Owner**: Codex + Emanuele
+- **Started on**: 2026-03-02
+- **Completed on**: 2026-03-02
 - **Acceptance Criteria**:
   - ADMIN and USER permissions are explicitly documented.
   - Checkout/return flow is documented with expected outcomes.
   - Forbidden actions and error behavior are listed.
 - **Evidence**:
+  - `docs/RBAC_CONTRACT.md`
+  - `docs/MVP_DASHBOARD_EXECUTION_PLAN.md`
 - **Notes**:
+  - Added a documentation-only RBAC contract aligned with current Prisma roles (`ADMIN`, `USER`) and auth helper baseline (`requireAuth`, `requireAdmin`).
+  - Locked checkout (`OUT`) and return (`IN`) flow expectations, forbidden actions, and status + app-code error behavior for Step 2 endpoint design.
 
 #### Step 2 — API Design (Route Handlers)
 
@@ -183,3 +187,4 @@ For every step card below, maintain the following fields:
 ## Execution Changelog
 
 - 2026-02-27: Initial execution plan created and approved scope captured.
+- 2026-03-02: Completed Step 1 (RBAC Contract + User Flows) and advanced Next Active Step to Step 2 (API Design).
