@@ -29,7 +29,7 @@ For every step card below, maintain the following fields:
 
 ## Next Active Step
 
-- `Step 4 — Products CRUD (Admin)`
+- `Step 4 — API Route Handler Critical Tests (Vitest + Playwright Smoke)`
 
 ---
 
@@ -101,7 +101,37 @@ For every step card below, maintain the following fields:
 
 ### Sprint 1
 
-#### Step 4 — Products CRUD (Admin)
+#### Step 4 — API Route Handler Critical Tests (Vitest + Playwright Smoke)
+
+- **Status**: TODO
+- **Owner**:
+- **Started on**:
+- **Completed on**:
+- **Acceptance Criteria**:
+  - Critical API route handlers have co-located unit tests (`*.test.ts`) beside source files.
+  - E2E smoke tests for API routes exist under `tests/api/` (or `tests/<feature>/`) with `*.spec.ts`.
+  - Unit tests cover critical success/error contracts for:
+    - `products` handlers
+    - `movements` handlers (`checkout`, `return`)
+    - `users role` handler
+  - Minimum critical error coverage enforced:
+    - `401 AUTH_UNAUTHENTICATED`
+    - `403 AUTH_FORBIDDEN` (where applicable)
+    - `422 INVALID_REQUEST_BODY` / `INVALID_MOVEMENT_QUANTITY`
+    - `404 PRODUCT_NOT_FOUND` / `USER_NOT_FOUND`
+    - `409 INSUFFICIENT_STOCK`
+  - `npm run test` passes.
+  - `npm run test:e2e` smoke suite passes.
+- **Evidence**:
+- **Notes**:
+  - Test only critical handler behavior and response contract (`ApiResult`) to keep velocity high.
+  - Do not attempt exhaustive combinatorial coverage.
+  - Do not block on broad browser/UI scenarios; only API smoke in Playwright.
+  - `.http` files are optional and non-gating.
+  - Testing conventions follow `AGENTS.md` (`*.test.ts|tsx` co-located, `tests/<feature>/*.spec.ts` for E2E).
+  - Script contract: `npm run test` for unit tests and `npm run test:e2e` for E2E smoke.
+
+#### Step 5 — Products CRUD (Admin)
 
 - **Status**: TODO
 - **Owner**:
@@ -113,7 +143,7 @@ For every step card below, maintain the following fields:
 - **Evidence**:
 - **Notes**:
 
-#### Step 5 — Checkout/Return Movements (User + Admin)
+#### Step 6 — Checkout/Return Movements (User + Admin)
 
 - **Status**: TODO
 - **Owner**:
@@ -126,7 +156,7 @@ For every step card below, maintain the following fields:
 - **Evidence**:
 - **Notes**:
 
-#### Step 6 — Movement History Feed
+#### Step 7 — Movement History Feed
 
 - **Status**: TODO
 - **Owner**:
@@ -140,7 +170,7 @@ For every step card below, maintain the following fields:
 
 ### Sprint 2
 
-#### Step 7 — Analytics Summary Widgets
+#### Step 8 — Analytics Summary Widgets
 
 - **Status**: TODO
 - **Owner**:
@@ -152,7 +182,7 @@ For every step card below, maintain the following fields:
 - **Evidence**:
 - **Notes**:
 
-#### Step 8 — Role Management (Admin)
+#### Step 9 — Role Management (Admin)
 
 - **Status**: TODO
 - **Owner**:
@@ -166,7 +196,7 @@ For every step card below, maintain the following fields:
 
 ### Done Gate
 
-#### Step 9 — UX + Reliability Hardening
+#### Step 10 — UX + Reliability Hardening
 
 - **Status**: TODO
 - **Owner**:
@@ -211,6 +241,7 @@ For every step card below, maintain the following fields:
 - 2026-03-02: Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
 - 2026-03-03: Completed Step 3 (Validation Layer with zod) and implemented API Route Handlers with standardized Result/error responses.
 - 2026-03-03: Corrected malformed endpoint matrix Markdown table in API contract doc while preserving endpoint contracts.
+- 2026-03-03: Inserted a new Step 4 testing gate for critical API Route Handler coverage (Vitest + Playwright smoke) and renumbered downstream MVP steps.
 - 2026-03-03: Resolved npm peer dependency conflict by aligning React/React DOM patch versions with Clerk peer requirements, and made `postinstall` resilient when `DATABASE_URL` is not set; verified installs without force/legacy-peer-deps.
 - 2026-03-03: Aligned Prisma CLI to Prisma 7 to match runtime packages and validated clean install with consistent Prisma majors.
 - 2026-03-03: Configured Playwright for Chromium-only E2E on macOS ARM by removing Firefox/WebKit projects and adding Chromium-specific install/run npm scripts.
