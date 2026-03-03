@@ -10,6 +10,22 @@ import { checkoutBodySchema } from '@/lib/api/schemas'
 import { requireAuth } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
 
+/**
+ * Perform a checkout (`OUT`) movement.
+ * Atomically decrements product quantity and creates movement history.
+ * Requires an authenticated user (`USER` or `ADMIN`).
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/movements/checkout', {
+ *   method: 'POST',
+ *   headers: { 'content-type': 'application/json' },
+ *   credentials: 'include',
+ *   body: JSON.stringify({ productId: 'prod_123', quantity: 2 }),
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function POST(request: Request) {
   try {
     const user = await requireAuth()

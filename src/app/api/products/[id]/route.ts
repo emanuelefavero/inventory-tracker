@@ -9,6 +9,21 @@ type ParamsContext = {
   params: Promise<{ id: string }>
 }
 
+/**
+ * Update a product by id.
+ * Requires an authenticated `ADMIN` user.
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/products/prod_123', {
+ *   method: 'PATCH',
+ *   headers: { 'content-type': 'application/json' },
+ *   credentials: 'include',
+ *   body: JSON.stringify({ name: 'Mechanical Keyboard', quantity: 12 }),
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function PATCH(request: Request, context: ParamsContext) {
   try {
     await requireAdmin()
@@ -43,6 +58,19 @@ export async function PATCH(request: Request, context: ParamsContext) {
   }
 }
 
+/**
+ * Delete a product by id.
+ * Requires an authenticated `ADMIN` user.
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/products/prod_123', {
+ *   method: 'DELETE',
+ *   credentials: 'include',
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function DELETE(_request: Request, context: ParamsContext) {
   try {
     await requireAdmin()

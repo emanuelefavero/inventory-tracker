@@ -257,3 +257,4 @@ For every step card below, maintain the following fields:
 - 2026-03-03: Updated AGENTS guidance with explicit testing conventions: co-located Vitest unit tests beside source files and feature-grouped Playwright E2E tests under `tests/<feature>/`.
 - 2026-03-03: Added a Testing Quick Start section and a Project Scripts table to README documenting Vitest unit-test co-location and Playwright E2E placement/commands.
 - 2026-03-03: Completed Step 4 by adding critical Vitest coverage for all API handlers, adding unauthenticated Playwright API smoke tests, and wiring Playwright local baseURL/webServer config.
+- 2026-03-03: Added TSDoc documentation with `@example` usage snippets to all API route handlers to improve maintainability and onboarding.

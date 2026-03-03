@@ -6,6 +6,18 @@ import { parseSearchParamsWithSchema } from '@/lib/api/validation'
 import { requireAuth } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
 
+/**
+ * List inventory movements with optional filtering and pagination.
+ * Requires an authenticated user (`USER` or `ADMIN`).
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/movements?type=OUT&page=1&limit=20', {
+ *   credentials: 'include',
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function GET(request: Request) {
   try {
     await requireAuth()

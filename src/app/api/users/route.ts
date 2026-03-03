@@ -5,6 +5,18 @@ import { parseSearchParamsWithSchema } from '@/lib/api/validation'
 import { requireAdmin } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
 
+/**
+ * List users for role management with optional filters and pagination.
+ * Requires an authenticated `ADMIN` user.
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/users?role=USER&page=1&limit=20', {
+ *   credentials: 'include',
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function GET(request: Request) {
   try {
     await requireAdmin()

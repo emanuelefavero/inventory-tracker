@@ -11,6 +11,18 @@ import {
 import { requireAdmin, requireAuth } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
 
+/**
+ * List products with pagination, optional search/category filters, and sorting.
+ * Requires an authenticated user (`USER` or `ADMIN`).
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/products?page=1&limit=20&search=key', {
+ *   credentials: 'include',
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function GET(request: Request) {
   try {
     await requireAuth()
@@ -67,6 +79,26 @@ export async function GET(request: Request) {
   }
 }
 
+/**
+ * Create a product.
+ * Requires an authenticated `ADMIN` user.
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/products', {
+ *   method: 'POST',
+ *   headers: { 'content-type': 'application/json' },
+ *   credentials: 'include',
+ *   body: JSON.stringify({
+ *     sku: 'SKU-001',
+ *     name: 'Keyboard',
+ *     category: 'Peripherals',
+ *     quantity: 10,
+ *   }),
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function POST(request: Request) {
   try {
     await requireAdmin()

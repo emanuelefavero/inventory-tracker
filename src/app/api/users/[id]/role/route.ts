@@ -9,6 +9,21 @@ type ParamsContext = {
   params: Promise<{ id: string }>
 }
 
+/**
+ * Update a user's role (`USER` or `ADMIN`) by id.
+ * Requires an authenticated `ADMIN` user.
+ *
+ * @example
+ * ```ts
+ * const response = await fetch('/api/users/user_123/role', {
+ *   method: 'PATCH',
+ *   headers: { 'content-type': 'application/json' },
+ *   credentials: 'include',
+ *   body: JSON.stringify({ role: 'ADMIN' }),
+ * })
+ * const data = await response.json()
+ * ```
+ */
 export async function PATCH(request: Request, context: ParamsContext) {
   try {
     await requireAdmin()
