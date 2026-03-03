@@ -29,7 +29,7 @@ For every step card below, maintain the following fields:
 
 ## Next Active Step
 
-- `Step 4 — API Route Handler Critical Tests (Vitest + Playwright Smoke)`
+- `Step 5 — Products CRUD (Admin)`
 
 ---
 
@@ -103,10 +103,10 @@ For every step card below, maintain the following fields:
 
 #### Step 4 — API Route Handler Critical Tests (Vitest + Playwright Smoke)
 
-- **Status**: TODO
-- **Owner**:
-- **Started on**:
-- **Completed on**:
+- **Status**: DONE
+- **Owner**: Codex + Emanuele
+- **Started on**: 2026-03-03
+- **Completed on**: 2026-03-03
 - **Acceptance Criteria**:
   - Critical API route handlers have co-located unit tests (`*.test.ts`) beside source files.
   - E2E smoke tests for API routes exist under `tests/api/` (or `tests/<feature>/`) with `*.spec.ts`.
@@ -123,13 +123,21 @@ For every step card below, maintain the following fields:
   - `npm run test` passes.
   - `npm run test:e2e` smoke suite passes.
 - **Evidence**:
+  - `src/app/api/products/route.test.ts`
+  - `src/app/api/products/[id]/route.test.ts`
+  - `src/app/api/movements/route.test.ts`
+  - `src/app/api/movements/checkout/route.test.ts`
+  - `src/app/api/movements/return/route.test.ts`
+  - `src/app/api/users/route.test.ts`
+  - `src/app/api/users/[id]/role/route.test.ts`
+  - `tests/api/routes.smoke.spec.ts`
+  - `playwright.config.ts`
+  - `npm run test`
+  - `npm run test:e2e`
 - **Notes**:
-  - Test only critical handler behavior and response contract (`ApiResult`) to keep velocity high.
-  - Do not attempt exhaustive combinatorial coverage.
-  - Do not block on broad browser/UI scenarios; only API smoke in Playwright.
-  - `.http` files are optional and non-gating.
-  - Testing conventions follow `AGENTS.md` (`*.test.ts|tsx` co-located, `tests/<feature>/*.spec.ts` for E2E).
-  - Script contract: `npm run test` for unit tests and `npm run test:e2e` for E2E smoke.
+  - Added co-located Vitest suites for all API route handlers with focused critical success/error contract assertions.
+  - Added Playwright API smoke tests under `tests/api` that validate unauthenticated access returns `401 AUTH_UNAUTHENTICATED` consistently across all protected endpoints.
+  - Updated Playwright config with local `baseURL` and `webServer` startup to support API smoke execution against the app.
 
 #### Step 5 — Products CRUD (Admin)
 
@@ -248,3 +256,4 @@ For every step card below, maintain the following fields:
 - 2026-03-03: Isolated test runners by scoping Vitest to unit tests and excluding Playwright E2E folders/config so `npm run test` runs unit tests only while `npm run test:e2e` remains Playwright-only.
 - 2026-03-03: Updated AGENTS guidance with explicit testing conventions: co-located Vitest unit tests beside source files and feature-grouped Playwright E2E tests under `tests/<feature>/`.
 - 2026-03-03: Added a Testing Quick Start section and a Project Scripts table to README documenting Vitest unit-test co-location and Playwright E2E placement/commands.
+- 2026-03-03: Completed Step 4 by adding critical Vitest coverage for all API handlers, adding unauthenticated Playwright API smoke tests, and wiring Playwright local baseURL/webServer config.
