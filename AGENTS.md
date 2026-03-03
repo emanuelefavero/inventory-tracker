@@ -48,6 +48,29 @@ To get the project up and running, follow these steps:
 
 - **Types:** Types are defined in the `src/types` directory.
 
+## Testing Conventions
+
+- **Unit tests (Vitest):**
+  - Co-locate unit tests next to the file under test.
+  - Use the naming pattern `*.test.ts` or `*.test.tsx`.
+  - Example: for `src/app/dashboard/page.tsx`, create `src/app/dashboard/page.test.tsx`.
+  - Run unit tests with:
+
+    ```bash
+    npm run test
+    ```
+
+- **End-to-end tests (Playwright):**
+  - Place E2E tests only in the global `tests` directory.
+  - Organize tests by feature using subfolders.
+  - Example: navigation E2E tests go in `tests/navigation/`.
+  - Use Playwright spec naming such as `*.spec.ts`.
+  - Run E2E tests with:
+
+    ```bash
+    npm run test:e2e
+    ```
+
 ## Execution Memory (Mandatory)
 
 Before starting any implementation task, always read:

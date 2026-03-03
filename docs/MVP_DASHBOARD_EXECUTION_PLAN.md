@@ -211,3 +211,9 @@ For every step card below, maintain the following fields:
 - 2026-03-02: Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
 - 2026-03-03: Completed Step 3 (Validation Layer with zod) and implemented API Route Handlers with standardized Result/error responses.
 - 2026-03-03: Corrected malformed endpoint matrix Markdown table in API contract doc while preserving endpoint contracts.
+- 2026-03-03: Resolved npm peer dependency conflict by aligning React/React DOM patch versions with Clerk peer requirements, and made `postinstall` resilient when `DATABASE_URL` is not set; verified installs without force/legacy-peer-deps.
+- 2026-03-03: Aligned Prisma CLI to Prisma 7 to match runtime packages and validated clean install with consistent Prisma majors.
+- 2026-03-03: Configured Playwright for Chromium-only E2E on macOS ARM by removing Firefox/WebKit projects and adding Chromium-specific install/run npm scripts.
+- 2026-03-03: Isolated test runners by scoping Vitest to unit tests and excluding Playwright E2E folders/config so `npm run test` runs unit tests only while `npm run test:e2e` remains Playwright-only.
+- 2026-03-03: Updated AGENTS guidance with explicit testing conventions: co-located Vitest unit tests beside source files and feature-grouped Playwright E2E tests under `tests/<feature>/`.
+- 2026-03-03: Added a Testing Quick Start section and a Project Scripts table to README documenting Vitest unit-test co-location and Playwright E2E placement/commands.
