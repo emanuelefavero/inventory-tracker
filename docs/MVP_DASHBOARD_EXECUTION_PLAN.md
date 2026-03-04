@@ -260,3 +260,4 @@ For every step card below, maintain the following fields:
 - 2026-03-03: Added TSDoc documentation with `@example` usage snippets to all API route handlers to improve maintainability and onboarding.
 - 2026-03-04: Hardened checkout route concurrency by switching to an atomic conditional stock decrement to prevent oversell under parallel requests; updated checkout unit tests for guarded update flow.
 - 2026-03-04: Refined checkout/return validation mapping so non-quantity payload schema errors return `INVALID_REQUEST_BODY` while quantity-only violations return `INVALID_MOVEMENT_QUANTITY`; added unit tests for the split behavior.
+- 2026-03-04: Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.

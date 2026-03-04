@@ -49,6 +49,19 @@ describe('api/users route handlers', () => {
     expect(response.status).toBe(200)
     expect(body.ok).toBe(true)
     expect(body.data.items).toHaveLength(1)
+    expect(body.data.items[0]).not.toHaveProperty('clerkId')
+    expect(prismaMock.user.findMany).toHaveBeenCalledWith({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+      },
+      where: {},
+      orderBy: { createdAt: 'desc' },
+      skip: 0,
+      take: 20,
+    })
   })
 
   it('GET returns 401 AUTH_UNAUTHENTICATED for unauthenticated users', async () => {

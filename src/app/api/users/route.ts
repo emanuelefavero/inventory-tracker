@@ -43,6 +43,12 @@ export async function GET(request: Request) {
 
     const [items, totalItems] = await prisma.$transaction([
       prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+        },
         where,
         orderBy: { createdAt: 'desc' },
         skip,
