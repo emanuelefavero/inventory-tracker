@@ -24,23 +24,23 @@ describe('api/movements/checkout route handlers', () => {
 
   it('POST returns 200 on successful checkout', async () => {
     requireAuth.mockResolvedValue({ id: 'user-1', role: 'USER' })
+    const findUnique = vi.fn().mockResolvedValue({
+      id: 'prod-1',
+      sku: 'SKU-001',
+      name: 'Keyboard',
+      category: 'Peripherals',
+      quantity: 8,
+      createdAt: new Date('2026-03-01T10:00:00.000Z'),
+      updatedAt: new Date('2026-03-01T10:00:00.000Z'),
+    })
+    const updateMany = vi.fn().mockResolvedValue({ count: 1 })
 
     prismaMock.$transaction.mockImplementation(
       async (callback: (tx: unknown) => Promise<unknown>) =>
         callback({
           product: {
-            findUnique: vi
-              .fn()
-              .mockResolvedValue({ id: 'prod-1', quantity: 10 }),
-            update: vi.fn().mockResolvedValue({
-              id: 'prod-1',
-              sku: 'SKU-001',
-              name: 'Keyboard',
-              category: 'Peripherals',
-              quantity: 8,
-              createdAt: new Date('2026-03-01T10:00:00.000Z'),
-              updatedAt: new Date('2026-03-01T10:00:00.000Z'),
-            }),
+            updateMany,
+            findUnique,
           },
           inventoryMovement: {
             create: vi.fn().mockResolvedValue({
@@ -68,17 +68,27 @@ describe('api/movements/checkout route handlers', () => {
     expect(body.ok).toBe(true)
     expect(body.data.movement.type).toBe('OUT')
     expect(body.data.product.quantity).toBe(8)
+    expect(updateMany).toHaveBeenCalledWith({
+      where: {
+        id: 'prod-1',
+        quantity: { gte: 2 },
+      },
+      data: {
+        quantity: { decrement: 2 },
+      },
+    })
   })
 
   it('POST returns 404 PRODUCT_NOT_FOUND when product does not exist', async () => {
     requireAuth.mockResolvedValue({ id: 'user-1', role: 'USER' })
+    const findUnique = vi.fn().mockResolvedValue(null)
 
     prismaMock.$transaction.mockImplementation(
       async (callback: (tx: unknown) => Promise<unknown>) =>
         callback({
           product: {
-            findUnique: vi.fn().mockResolvedValue(null),
-            update: vi.fn(),
+            updateMany: vi.fn().mockResolvedValue({ count: 0 }),
+            findUnique,
           },
           inventoryMovement: {
             create: vi.fn(),
@@ -98,6 +108,10 @@ describe('api/movements/checkout route handlers', () => {
     expect(response.status).toBe(404)
     expect(body.ok).toBe(false)
     expect(body.error.code).toBe('PRODUCT_NOT_FOUND')
+    expect(findUnique).toHaveBeenCalledWith({
+      where: { id: 'missing' },
+      select: { id: true },
+    })
   })
 
   it('POST returns 409 INSUFFICIENT_STOCK when quantity exceeds stock', async () => {
@@ -107,10 +121,8 @@ describe('api/movements/checkout route handlers', () => {
       async (callback: (tx: unknown) => Promise<unknown>) =>
         callback({
           product: {
-            findUnique: vi
-              .fn()
-              .mockResolvedValue({ id: 'prod-1', quantity: 1 }),
-            update: vi.fn(),
+            updateMany: vi.fn().mockResolvedValue({ count: 0 }),
+            findUnique: vi.fn().mockResolvedValue({ id: 'prod-1' }),
           },
           inventoryMovement: {
             create: vi.fn(),

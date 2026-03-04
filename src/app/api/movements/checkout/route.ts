@@ -42,29 +42,47 @@ export async function POST(request: Request) {
     const payload = parsed.data
 
     const result = await prisma.$transaction(async (tx) => {
-      const product = await tx.product.findUnique({
-        where: { id: payload.productId },
+      const decremented = await tx.product.updateMany({
+        where: {
+          id: payload.productId,
+          quantity: {
+            gte: payload.quantity,
+          },
+        },
+        data: {
+          quantity: {
+            decrement: payload.quantity,
+          },
+        },
       })
 
-      if (!product) {
-        return { kind: 'not_found' as const }
-      }
+      if (decremented.count === 0) {
+        const existingProduct = await tx.product.findUnique({
+          where: { id: payload.productId },
+          select: { id: true },
+        })
 
-      if (product.quantity < payload.quantity) {
+        if (!existingProduct) {
+          return { kind: 'not_found' as const }
+        }
+
         return { kind: 'insufficient_stock' as const }
       }
 
-      const updatedProduct = await tx.product.update({
-        where: { id: product.id },
-        data: { quantity: { decrement: payload.quantity } },
+      const updatedProduct = await tx.product.findUnique({
+        where: { id: payload.productId },
       })
+
+      if (!updatedProduct) {
+        return { kind: 'not_found' as const }
+      }
 
       const movement = await tx.inventoryMovement.create({
         data: {
           type: MovementType.OUT,
           quantity: payload.quantity,
           userId: user.id,
-          productId: product.id,
+          productId: payload.productId,
         },
       })
 
