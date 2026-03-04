@@ -161,6 +161,23 @@ describe('api/movements/checkout route handlers', () => {
     expect(body.error.code).toBe('INVALID_MOVEMENT_QUANTITY')
   })
 
+  it('POST returns 422 INVALID_REQUEST_BODY for non-quantity schema errors', async () => {
+    requireAuth.mockResolvedValue({ id: 'user-1', role: 'USER' })
+
+    const response = await POST(
+      new Request('http://localhost:3000/api/movements/checkout', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ quantity: 2 }),
+      }),
+    )
+    const body = await response.json()
+
+    expect(response.status).toBe(422)
+    expect(body.ok).toBe(false)
+    expect(body.error.code).toBe('INVALID_REQUEST_BODY')
+  })
+
   it('POST returns 401 AUTH_UNAUTHENTICATED when user is unauthenticated', async () => {
     requireAuth.mockRejectedValue(
       new Error('Unauthorized: Authentication required'),

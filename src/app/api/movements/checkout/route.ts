@@ -9,6 +9,7 @@ import { err, ok } from '@/lib/api/response'
 import { checkoutBodySchema } from '@/lib/api/schemas'
 import { requireAuth } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
+import { ZodError } from 'zod'
 
 /**
  * Perform a checkout (`OUT`) movement.
@@ -33,6 +34,16 @@ export async function POST(request: Request) {
     const parsed = checkoutBodySchema.safeParse(body)
 
     if (!parsed.success) {
+      const hasOnlyQuantityErrors = parsed.error.issues.every((issue) => {
+        const [rootPath] = issue.path
+        return rootPath === 'quantity'
+      })
+
+      if (!hasOnlyQuantityErrors) {
+        const mapped = mapErrorToResponse(new ZodError(parsed.error.issues))
+        return err(mapped.error, mapped.status)
+      }
+
       const validationError = invalidMovementQuantity(
         'Quantity must be a positive integer',
       )
