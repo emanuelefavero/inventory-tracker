@@ -355,17 +355,86 @@ From `Step 5 — Products CRUD (Admin)`:
 
 ## 16. Implementation Order (when execution starts)
 
-1. Install dependencies (`zustand`, `react-hook-form`, `@hookform/resolvers`, `sonner`)
-2. Add required shadcn components (`input`, `form`, `label`, `table`, `dialog`, `alert-dialog`, `select`, `card`, `skeleton`, `badge`, `sonner`)
-3. Implement API client wrappers (`src/lib/api/products-client.ts`)
-4. Implement server query function (`src/lib/products/queries.ts`)
-5. Build `/admin/products/page.tsx` with RBAC gate + Suspense boundary + initial data
-6. Implement route-local Zustand store with devtools
-7. Build client composition + toolbar (with debounced search) + table (with row action dropdown) + dialogs (with toast feedback) + empty state
-8. Add header admin link
-9. Add unit tests
-10. Run checks (`npm run test`, `npm run lint`, optional `npm run build`)
-11. Update execution plan evidence/changelog
+> **IMPORTANT — Implement this plan phase by phase, in order. Complete and verify each phase before starting the next. Do not implement all phases at once.**
+>
+> Each phase ships a working, testable vertical slice. After every phase, the app must be in a coherent, runnable state.
+
+---
+
+### Phase 1 — Data Layer Foundation
+
+**Goal:** Install all dependencies and build the data layer. No UI yet.
+
+**Steps:**
+
+1. Install npm dependencies: `zustand`, `react-hook-form`, `@hookform/resolvers`, `sonner`
+2. Add shadcn components: `input`, `form`, `label`, `table`, `dialog`, `alert-dialog`, `select`, `card`, `skeleton`, `badge`, `sonner`
+3. Implement `src/lib/api/products-client.ts` — typed fetch wrappers returning `ApiResult<T>` for create, update, delete
+4. Implement `src/lib/products/queries.ts` — server-side Prisma query function for listing products with search/sort/pagination
+5. Write `src/lib/api/products-client.test.ts` — unit tests for API client success/error handling
+
+**Verification:** `npm run test` passes. Query function can be manually invoked to confirm it returns data.
+
+---
+
+### Phase 2 — Read Path (Page + Table + Search + Pagination)
+
+**Goal:** Build the full read experience. Products list with working search, sort, pagination, and empty state. No create/edit/delete dialogs yet.
+
+**Steps:**
+
+1. Create `src/app/admin/products/_store/use-products-admin-ui-store.ts` — Zustand store with `devtools` middleware and all actions (`openCreate`, `openEdit`, `openDelete`, `closeDialogs`)
+2. Create `src/app/admin/products/page.tsx` — server page with RBAC gate (`requireAdmin`), query param parsing, Suspense boundary, and initial data fetch
+3. Create `src/app/admin/products/_components/products-admin-client.tsx` — client shell receiving server data and rendering toolbar + table
+4. Create `src/app/admin/products/_components/products-toolbar.tsx` — debounced search input (300ms) + sort select, all URL updates wrapped in `startTransition()`
+5. Create `src/app/admin/products/_components/products-table.tsx` — semantic table with pagination display ("Showing X–Y of Z"), row action dropdown (Edit/Delete items call Zustand actions but dialogs don't exist yet)
+6. Create `src/app/admin/products/_components/products-empty-state.tsx` — empty state with CTA button that calls `openCreate()`
+7. Write `src/app/admin/products/page.test.tsx`, `products-admin-client.test.tsx`, `use-products-admin-ui-store.test.ts`
+
+**Verification:** Navigate to `/admin/products` in the running app. Real product table renders with data from the DB. Search, sort, and pagination work. Clicking row action dropdown items does nothing visible yet (dialogs don't exist). Empty state appears when DB has no products.
+
+---
+
+### Phase 3 — Create & Edit Mutations
+
+**Goal:** Add the product form dialog for both create and edit modes. Full mutation cycle with toast feedback.
+
+**Steps:**
+
+1. Create `src/app/admin/products/_components/product-form-dialog.tsx` — single dialog controlled by Zustand `formMode` (`create | edit`), using `react-hook-form` with `zodResolver` pointing to existing `createProductBodySchema` / `updateProductBodySchema` from `src/lib/api/schemas.ts`; submit button shows loading spinner + disabled state; on success: `toast.success`, `closeDialogs()`, `router.refresh()`; on error: `toast.error`, keep dialog open
+2. Wire `<Toaster />` from `sonner` into the layout or client shell if not already present
+3. Extend `products-admin-client.test.tsx` with mutation success/error tests for create and edit
+
+**Verification:** Create a new product via the dialog — it appears in the table with a success toast. Edit an existing product — the table updates. Invalid input shows field-level validation errors. Double-clicking submit is blocked by the loading state.
+
+---
+
+### Phase 4 — Delete Mutation
+
+**Goal:** Add the destructive delete confirmation dialog. Complete the full CRUD cycle.
+
+**Steps:**
+
+1. Create `src/app/admin/products/_components/delete-product-dialog.tsx` — `AlertDialog` (not `Dialog`) for destructive confirmation; on confirm: calls `DELETE /api/products/:id` via `products-client.ts`, shows `toast.success`, calls `closeDialogs()` and `router.refresh()`; on cancel: calls `closeDialogs()` only
+2. Extend `products-admin-client.test.tsx` with delete success/error/cancel tests
+
+**Verification:** Full CRUD works end-to-end. Delete shows a destructive `AlertDialog`. Cancel leaves the product untouched. Confirm deletes and refreshes the table with a success toast.
+
+---
+
+### Phase 5 — Navigation + Final Checks
+
+**Goal:** Wire admin navigation link, run all quality checks, and mark Step 5 complete in the execution plan.
+
+**Steps:**
+
+1. Update `src/components/layout/header.tsx` — add admin navigation link to `/admin/products` (visible to admin users only)
+2. Run `npm run test` — all unit tests must pass
+3. Run `npm run lint` — no lint errors
+4. Run `npm run build` (optional but recommended)
+5. Update `docs/MVP_DASHBOARD_EXECUTION_PLAN.md` — mark Step 5 `DONE`, fill in `Completed on`, `Evidence`, `Notes`, `Next Active Step`, and add an `Execution Changelog` entry
+
+**Verification:** Admin sees the nav link in the header. All checks pass. Execution plan reflects Step 5 as DONE.
 
 ---
 
