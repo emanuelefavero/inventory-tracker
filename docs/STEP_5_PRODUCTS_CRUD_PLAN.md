@@ -62,7 +62,7 @@ This step must stay lean and interview-quality:
 4. **Data fetching:** Server-first with Next.js Server Components, wrapped in `<Suspense>`
 5. **Zustand usage:** Route-local UI state only (no server data caching)
 6. **Mutation feedback:** Toast notifications via `sonner` for success/error
-7. **Form validation:** Reuse existing zod schemas from `src/lib/api/schemas.ts` with `zodResolver`
+7. **Form validation:** Reuse existing zod schemas from `src/lib/products/schemas.ts` with `zodResolver`
 8. **Search:** Debounced input (300ms) with `useTransition` for non-blocking URL updates
 9. **Table row actions:** Dropdown menu per row (reuse existing `dropdown-menu` component)
 
@@ -89,9 +89,9 @@ This step must stay lean and interview-quality:
 ## 4.2 Mutations (Client Path)
 
 1. User opens create/edit/delete dialogs (controlled by Zustand store)
-2. Form dialogs use `react-hook-form` with `zodResolver` pointing to existing schemas from `src/lib/api/schemas.ts` (`createProductBodySchema` / `updateProductBodySchema`)
+2. Form dialogs use `react-hook-form` with `zodResolver` pointing to existing schemas from `src/lib/products/schemas.ts` (`createProductBodySchema` / `updateProductBodySchema`)
 3. Submit button shows loading spinner + disabled state during API call (prevents double-submit)
-4. Client calls existing API endpoints via typed wrappers in `src/lib/api/products-client.ts`:
+4. Client calls existing API endpoints via typed wrappers in `src/lib/products/client.ts`:
    - `POST /api/products`
    - `PATCH /api/products/:id`
    - `DELETE /api/products/:id`
@@ -167,14 +167,23 @@ Create a route-local store at:
 
 ### API client wrappers
 
-- `src/lib/api/products-client.ts`
+- `src/lib/products/client.ts`
+
+### Domain contracts
+
+- `src/lib/products/schemas.ts`
+- `src/lib/products/types.ts`
+- `src/lib/movements/schemas.ts`
+- `src/lib/movements/types.ts`
+- `src/lib/users/schemas.ts`
+- `src/lib/users/types.ts`
 
 ### Tests
 
 - `src/app/admin/products/page.test.tsx`
 - `src/app/admin/products/_components/products-admin-client.test.tsx`
 - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
-- `src/lib/api/products-client.test.ts`
+- `src/lib/products/client.test.ts`
 
 ## 6.2 Modify
 
@@ -258,7 +267,7 @@ Use existing API route handlers exactly as implemented:
 
 ### Form Validation Reuse
 
-The `ProductFormDialog` must import and reuse existing zod schemas directly from `src/lib/api/schemas.ts`:
+The `ProductFormDialog` must import and reuse existing zod schemas directly from `src/lib/products/schemas.ts`:
 
 - `createProductBodySchema` for create mode
 - `updateProductBodySchema` for edit mode
@@ -267,7 +276,15 @@ This ensures a single source of truth for validation rules between client forms 
 
 ### Type-Safe API Client
 
-`src/lib/api/products-client.ts` must return typed `ApiResult<T>` responses (matching the discriminated union from `src/lib/api/types.ts`) so consumers can handle success/error branches with type safety.
+`src/lib/products/client.ts` must return typed `ApiResult<T>` responses (matching the discriminated union from `src/lib/api/types.ts`) so consumers can handle success/error branches with type safety.
+
+### Shared domain folder structure
+
+Step 5 now follows domain folders inside `src/lib`:
+
+- `src/lib/products`
+- `src/lib/movements`
+- `src/lib/users`
 
 No backend contract changes are required for Step 5.
 
@@ -334,7 +351,7 @@ Minimal responsive awareness for MVP:
    **Mitigation:** Defer advanced tables, global state, skeleton components, and analytics to future steps.
 
 4. **Risk:** Validation drift between client forms and API
-   **Mitigation:** Reuse existing zod schemas from `src/lib/api/schemas.ts` in form `zodResolver`.
+   **Mitigation:** Reuse existing zod schemas from `src/lib/products/schemas.ts` in form `zodResolver`.
 
 ---
 
@@ -369,9 +386,9 @@ From `Step 5 — Products CRUD (Admin)`:
 
 1. Install npm dependencies: `zustand`, `react-hook-form`, `@hookform/resolvers`, `sonner`
 2. Add shadcn components: `input`, `form`, `label`, `table`, `dialog`, `alert-dialog`, `select`, `card`, `skeleton`, `badge`, `sonner`
-3. Implement `src/lib/api/products-client.ts` — typed fetch wrappers returning `ApiResult<T>` for create, update, delete
+3. Implement `src/lib/products/client.ts` — typed fetch wrappers returning `ApiResult<T>` for create, update, delete
 4. Implement `src/lib/products/queries.ts` — server-side Prisma query function for listing products with search/sort/pagination
-5. Write `src/lib/api/products-client.test.ts` — unit tests for API client success/error handling
+5. Write `src/lib/products/client.test.ts` — unit tests for API client success/error handling
 
 **Verification:** `npm run test` passes. Query function can be manually invoked to confirm it returns data.
 
@@ -401,7 +418,7 @@ From `Step 5 — Products CRUD (Admin)`:
 
 **Steps:**
 
-1. Create `src/app/admin/products/_components/product-form-dialog.tsx` — single dialog controlled by Zustand `formMode` (`create | edit`), using `react-hook-form` with `zodResolver` pointing to existing `createProductBodySchema` / `updateProductBodySchema` from `src/lib/api/schemas.ts`; submit button shows loading spinner + disabled state; on success: `toast.success`, `closeDialogs()`, `router.refresh()`; on error: `toast.error`, keep dialog open
+1. Create `src/app/admin/products/_components/product-form-dialog.tsx` — single dialog controlled by Zustand `formMode` (`create | edit`), using `react-hook-form` with `zodResolver` pointing to existing `createProductBodySchema` / `updateProductBodySchema` from `src/lib/products/schemas.ts`; submit button shows loading spinner + disabled state; on success: `toast.success`, `closeDialogs()`, `router.refresh()`; on error: `toast.error`, keep dialog open
 2. Wire `<Toaster />` from `sonner` into the layout or client shell if not already present
 3. Extend `products-admin-client.test.tsx` with mutation success/error tests for create and edit
 
@@ -415,7 +432,7 @@ From `Step 5 — Products CRUD (Admin)`:
 
 **Steps:**
 
-1. Create `src/app/admin/products/_components/delete-product-dialog.tsx` — `AlertDialog` (not `Dialog`) for destructive confirmation; on confirm: calls `DELETE /api/products/:id` via `products-client.ts`, shows `toast.success`, calls `closeDialogs()` and `router.refresh()`; on cancel: calls `closeDialogs()` only
+1. Create `src/app/admin/products/_components/delete-product-dialog.tsx` — `AlertDialog` (not `Dialog`) for destructive confirmation; on confirm: calls `DELETE /api/products/:id` via `client.ts`, shows `toast.success`, calls `closeDialogs()` and `router.refresh()`; on cancel: calls `closeDialogs()` only
 2. Extend `products-admin-client.test.tsx` with delete success/error/cancel tests
 
 **Verification:** Full CRUD works end-to-end. Delete shows a destructive `AlertDialog`. Cancel leaves the product untouched. Confirm deletes and refreshes the table with a success toast.
@@ -450,7 +467,7 @@ The following improvements are planned but intentionally deferred to avoid Step 
 2. **SKU Uniqueness Error Handling**
    - Catch Prisma `P2002` unique constraint error in the `POST /api/products` handler
    - Return a specific `DUPLICATE_SKU` error code (or reuse `INVALID_REQUEST_BODY` with field detail)
-   - Map the error in `products-client.ts` to show a field-level form error ("SKU already exists")
+   - Map the error in `client.ts` to show a field-level form error ("SKU already exists")
    - Currently falls through to `INTERNAL_ERROR` (500) — functional but not user-friendly
 
 3. **Tooltip on Table Row Actions**

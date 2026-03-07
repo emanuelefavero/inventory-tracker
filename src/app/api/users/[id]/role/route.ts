@@ -1,9 +1,10 @@
 import { mapErrorToResponse, notFound } from '@/lib/api/errors'
 import { err, ok } from '@/lib/api/response'
-import { idParamSchema, roleBodySchema } from '@/lib/api/schemas'
+import { idParamSchema } from '@/lib/api/schemas'
 import { parseJsonWithSchema } from '@/lib/api/validation'
 import { requireAdmin, updateUserRole } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
+import { roleBodySchema } from '@/lib/users/schemas'
 
 type ParamsContext = {
   params: Promise<{ id: string }>

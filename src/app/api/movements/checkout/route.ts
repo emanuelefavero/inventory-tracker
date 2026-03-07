@@ -6,8 +6,8 @@ import {
   notFound,
 } from '@/lib/api/errors'
 import { err, ok } from '@/lib/api/response'
-import { checkoutBodySchema } from '@/lib/api/schemas'
 import { requireAuth } from '@/lib/auth-helpers'
+import { checkoutBodySchema } from '@/lib/movements/schemas'
 import prisma from '@/lib/prisma'
 import { ZodError } from 'zod'
 

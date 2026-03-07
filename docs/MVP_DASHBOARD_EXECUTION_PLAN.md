@@ -29,7 +29,7 @@ For every step card below, maintain the following fields:
 
 ## Next Active Step
 
-- `Step 5 — Products CRUD (Admin)`
+- `Step 5 — Products CRUD (Admin), Phase 2 — Read Path`
 
 ---
 
@@ -141,15 +141,35 @@ For every step card below, maintain the following fields:
 
 #### Step 5 — Products CRUD (Admin)
 
-- **Status**: TODO
-- **Owner**:
-- **Started on**:
+- **Status**: IN_PROGRESS
+- **Owner**: Codex + Emanuele
+- **Started on**: 2026-03-07
 - **Completed on**:
 - **Acceptance Criteria**:
   - Admin can create, edit, delete, and list products.
   - Product table supports search/sort.
 - **Evidence**:
+  - `src/lib/products/client.ts`
+  - `src/lib/products/queries.ts`
+  - `src/lib/products/client.test.ts`
+  - `src/lib/products/schemas.ts`
+  - `src/lib/products/types.ts`
+  - `src/lib/movements/schemas.ts`
+  - `src/lib/movements/types.ts`
+  - `src/lib/users/schemas.ts`
+  - `src/lib/users/types.ts`
+  - `src/app/api/products/route.ts`
+  - `npm run test -- src/lib/products/client.test.ts src/app/api/products/route.test.ts`
+  - `npm run test`
+  - `npm run lint`
 - **Notes**:
+  - Completed Phase 1 (Data Layer Foundation) from `docs/STEP_5_PRODUCTS_CRUD_PLAN.md`.
+  - Added typed product mutation fetch wrappers returning `ApiResult<T>` for create, update, and delete flows.
+  - Added a reusable server-side `listProducts` Prisma query with search, sort, and pagination, then aligned `GET /api/products` to reuse it so Step 5 read paths share one query contract.
+  - Added API client unit tests for success, error, and safe fallback handling.
+  - Refactored shared contracts into domain folders under `src/lib/products`, `src/lib/movements`, and `src/lib/users`, leaving `src/lib/api` for cross-domain API infrastructure only.
+  - Verified the full Vitest suite passes after the Phase 1 data-layer changes.
+  - Next work starts with Phase 2 (Read Path) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
 
@@ -261,3 +281,5 @@ For every step card below, maintain the following fields:
 - 2026-03-04: Hardened checkout route concurrency by switching to an atomic conditional stock decrement to prevent oversell under parallel requests; updated checkout unit tests for guarded update flow.
 - 2026-03-04: Refined checkout/return validation mapping so non-quantity payload schema errors return `INVALID_REQUEST_BODY` while quantity-only violations return `INVALID_MOVEMENT_QUANTITY`; added unit tests for the split behavior.
 - 2026-03-04: Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.
+- 2026-03-07: Started Step 5 and completed Phase 1 (Data Layer Foundation) by adding typed product mutation clients, a shared server-side product listing query, refactoring `GET /api/products` to reuse it, and covering the new client with unit tests.
+- 2026-03-07: Reorganized shared contracts into `src/lib/products`, `src/lib/movements`, and `src/lib/users`, moved the product client beside the product query layer, and left `src/lib/api` as cross-domain API infrastructure.
