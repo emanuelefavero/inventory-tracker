@@ -1,6 +1,5 @@
 # Step 5 Detailed Plan — Products CRUD (Admin)
 
-**Date:** 2026-03-05  
 **Execution Plan Reference:** `docs/MVP_DASHBOARD_EXECUTION_PLAN.md`  
 **Step:** `Step 5 — Products CRUD (Admin)`
 
@@ -449,7 +448,7 @@ From `Step 5 — Products CRUD (Admin)`:
 2. Run `npm run test` — all unit tests must pass
 3. Run `npm run lint` — no lint errors
 4. Run `npm run build` (optional but recommended)
-5. Update `docs/MVP_DASHBOARD_EXECUTION_PLAN.md` — mark Step 5 `DONE`, fill in `Completed on`, `Evidence`, `Notes`, `Next Active Step`, and add an `Execution Changelog` entry
+5. Update `docs/MVP_DASHBOARD_EXECUTION_PLAN.md` — mark Step 5 `DONE`, update `Evidence`, `Notes`, `Next Active Step`, and add an `Execution Changelog` entry
 
 **Verification:** Admin sees the nav link in the header. All checks pass. Execution plan reflects Step 5 as DONE.
 

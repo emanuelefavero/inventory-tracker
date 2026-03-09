@@ -14,9 +14,7 @@ This file is the single source of truth for implementing the private inventory d
 For every step card below, maintain the following fields:
 
 - `Status`: `TODO` | `IN_PROGRESS` | `BLOCKED` | `DONE`
-- `Owner`: person/agent executing the step
-- `Started on`: YYYY-MM-DD (when moved to `IN_PROGRESS`)
-- `Completed on`: YYYY-MM-DD (when moved to `DONE`)
+- `Owner`: person executing the step
 - `Evidence`: links to changed files/PR/tests/checks
 - `Notes`: short implementation notes and follow-ups
 
@@ -40,9 +38,7 @@ For every step card below, maintain the following fields:
 #### Step 1 — RBAC Contract + User Flows
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-02
-- **Completed on**: 2026-03-02
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - ADMIN and USER permissions are explicitly documented.
   - Checkout/return flow is documented with expected outcomes.
@@ -57,9 +53,7 @@ For every step card below, maintain the following fields:
 #### Step 2 — API Design (Route Handlers)
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-02
-- **Completed on**: 2026-03-02
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Endpoint matrix finalized for products, movements, and role updates.
   - Auth/role requirement defined per endpoint.
@@ -76,9 +70,7 @@ For every step card below, maintain the following fields:
 #### Step 3 — Validation Layer (`zod`)
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-03
-- **Completed on**: 2026-03-03
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Mutating endpoints validate payloads with `zod`.
   - Validation errors are user-friendly and consistent.
@@ -104,9 +96,7 @@ For every step card below, maintain the following fields:
 #### Step 4 — API Route Handler Critical Tests (Vitest + Playwright Smoke)
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-03
-- **Completed on**: 2026-03-03
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Critical API route handlers have co-located unit tests (`*.test.ts`) beside source files.
   - E2E smoke tests for API routes exist under `tests/api/` (or `tests/<feature>/`) with `*.spec.ts`.
@@ -142,9 +132,7 @@ For every step card below, maintain the following fields:
 #### Step 5 — Products CRUD (Admin)
 
 - **Status**: IN_PROGRESS
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-07
-- **Completed on**:
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Admin can create, edit, delete, and list products.
   - Product table supports search/sort.
@@ -175,8 +163,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - OUT movement decreases quantity.
   - Return uses opposite IN movement and restores quantity.
@@ -188,8 +174,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Feed shows who moved what and when.
   - Filtering by type/date/user/product works.
@@ -202,8 +186,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Dashboard cards show totals, low-stock count, recent movement KPIs.
   - Data is accurate against current DB state.
@@ -214,8 +196,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Admin can promote/demote users.
   - Role updates stay synced with Clerk metadata.
@@ -228,8 +208,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Empty/loading/error states implemented across MVP screens.
   - RBAC checks verified manually (unauthenticated, USER, ADMIN).
@@ -264,22 +242,22 @@ For every step card below, maintain the following fields:
 
 ## Execution Changelog
 
-- 2026-02-27: Initial execution plan created and approved scope captured.
-- 2026-03-02: Completed Step 1 (RBAC Contract + User Flows) and advanced Next Active Step to Step 2 (API Design).
-- 2026-03-02: Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
-- 2026-03-03: Completed Step 3 (Validation Layer with zod) and implemented API Route Handlers with standardized Result/error responses.
-- 2026-03-03: Corrected malformed endpoint matrix Markdown table in API contract doc while preserving endpoint contracts.
-- 2026-03-03: Inserted a new Step 4 testing gate for critical API Route Handler coverage (Vitest + Playwright smoke) and renumbered downstream MVP steps.
-- 2026-03-03: Resolved npm peer dependency conflict by aligning React/React DOM patch versions with Clerk peer requirements, and made `postinstall` resilient when `DATABASE_URL` is not set; verified installs without force/legacy-peer-deps.
-- 2026-03-03: Aligned Prisma CLI to Prisma 7 to match runtime packages and validated clean install with consistent Prisma majors.
-- 2026-03-03: Configured Playwright for Chromium-only E2E on macOS ARM by removing Firefox/WebKit projects and adding Chromium-specific install/run npm scripts.
-- 2026-03-03: Isolated test runners by scoping Vitest to unit tests and excluding Playwright E2E folders/config so `npm run test` runs unit tests only while `npm run test:e2e` remains Playwright-only.
-- 2026-03-03: Updated AGENTS guidance with explicit testing conventions: co-located Vitest unit tests beside source files and feature-grouped Playwright E2E tests under `tests/<feature>/`.
-- 2026-03-03: Added a Testing Quick Start section and a Project Scripts table to README documenting Vitest unit-test co-location and Playwright E2E placement/commands.
-- 2026-03-03: Completed Step 4 by adding critical Vitest coverage for all API handlers, adding unauthenticated Playwright API smoke tests, and wiring Playwright local baseURL/webServer config.
-- 2026-03-03: Added TSDoc documentation with `@example` usage snippets to all API route handlers to improve maintainability and onboarding.
-- 2026-03-04: Hardened checkout route concurrency by switching to an atomic conditional stock decrement to prevent oversell under parallel requests; updated checkout unit tests for guarded update flow.
-- 2026-03-04: Refined checkout/return validation mapping so non-quantity payload schema errors return `INVALID_REQUEST_BODY` while quantity-only violations return `INVALID_MOVEMENT_QUANTITY`; added unit tests for the split behavior.
-- 2026-03-04: Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.
-- 2026-03-07: Started Step 5 and completed Phase 1 (Data Layer Foundation) by adding typed product mutation clients, a shared server-side product listing query, refactoring `GET /api/products` to reuse it, and covering the new client with unit tests.
-- 2026-03-07: Reorganized shared contracts into `src/lib/products`, `src/lib/movements`, and `src/lib/users`, moved the product client beside the product query layer, and left `src/lib/api` as cross-domain API infrastructure.
+- Initial execution plan created and approved scope captured.
+- Completed Step 1 (RBAC Contract + User Flows) and advanced Next Active Step to Step 2 (API Design).
+- Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
+- Completed Step 3 (Validation Layer with zod) and implemented API Route Handlers with standardized Result/error responses.
+- Corrected malformed endpoint matrix Markdown table in API contract doc while preserving endpoint contracts.
+- Inserted a new Step 4 testing gate for critical API Route Handler coverage (Vitest + Playwright smoke) and renumbered downstream MVP steps.
+- Resolved npm peer dependency conflict by aligning React/React DOM patch versions with Clerk peer requirements, and made `postinstall` resilient when `DATABASE_URL` is not set; verified installs without force/legacy-peer-deps.
+- Aligned Prisma CLI to Prisma 7 to match runtime packages and validated clean install with consistent Prisma majors.
+- Configured Playwright for Chromium-only E2E on macOS ARM by removing Firefox/WebKit projects and adding Chromium-specific install/run npm scripts.
+- Isolated test runners by scoping Vitest to unit tests and excluding Playwright E2E folders/config so `npm run test` runs unit tests only while `npm run test:e2e` remains Playwright-only.
+- Updated AGENTS guidance with explicit testing conventions: co-located Vitest unit tests beside source files and feature-grouped Playwright E2E tests under `tests/<feature>/`.
+- Added a Testing Quick Start section and a Project Scripts table to README documenting Vitest unit-test co-location and Playwright E2E placement/commands.
+- Completed Step 4 by adding critical Vitest coverage for all API handlers, adding unauthenticated Playwright API smoke tests, and wiring Playwright local baseURL/webServer config.
+- Added TSDoc documentation with `@example` usage snippets to all API route handlers to improve maintainability and onboarding.
+- Hardened checkout route concurrency by switching to an atomic conditional stock decrement to prevent oversell under parallel requests; updated checkout unit tests for guarded update flow.
+- Refined checkout/return validation mapping so non-quantity payload schema errors return `INVALID_REQUEST_BODY` while quantity-only violations return `INVALID_MOVEMENT_QUANTITY`; added unit tests for the split behavior.
+- Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.
+- Started Step 5 and completed Phase 1 (Data Layer Foundation) by adding typed product mutation clients, a shared server-side product listing query, refactoring `GET /api/products` to reuse it, and covering the new client with unit tests.
+- Reorganized shared contracts into `src/lib/products`, `src/lib/movements`, and `src/lib/users`, moved the product client beside the product query layer, and left `src/lib/api` as cross-domain API infrastructure.
