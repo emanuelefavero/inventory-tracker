@@ -80,7 +80,6 @@ Before starting any implementation task, always read:
 After completing any implementation step, update the same file in the same task before stopping, including:
 
 - Step `Status` changes (`TODO`/`IN_PROGRESS`/`BLOCKED`/`DONE`)
-- `Started on` / `Completed on`
 - `Evidence` and short `Notes`
 - `Next Active Step`
 - `Execution Changelog`
