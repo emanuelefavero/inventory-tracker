@@ -152,8 +152,11 @@ For every step card below, maintain the following fields:
   - `src/app/admin/products/_components/products-admin-content.tsx`
   - `src/app/admin/products/_components/products-admin-client.tsx`
   - `src/app/admin/products/_components/products-admin-client.test.tsx`
+  - `src/app/admin/products/_components/products-page-skeleton.tsx`
   - `src/app/admin/products/_components/products-toolbar.tsx`
+  - `src/app/admin/products/_components/products-toolbar-skeleton.tsx`
   - `src/app/admin/products/_components/products-table.tsx`
+  - `src/app/admin/products/_components/products-table-skeleton.tsx`
   - `src/app/admin/products/_components/products-empty-state.tsx`
   - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
   - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
@@ -172,6 +175,7 @@ For every step card below, maintain the following fields:
   - Completed Phase 2 (Read Path) by adding the server-first `/admin/products` route, a nested async server content component, a thin client shell for URL-driven search/sort/pagination, an empty state, and a preparatory route-local Zustand UI store.
   - The admin page now redirects unauthenticated users to `/`, renders an on-route blocked state for authenticated non-admin users, and reads data directly from `src/lib/products/queries.ts` instead of loopback-fetching the internal API route.
   - Added targeted unit coverage for page auth/query normalization, client query orchestration, and the route-local Zustand store; verified the new Phase 2 suite and scoped lint checks pass.
+  - Refined Phase 2 UX with a search-aware no-results state, composite toolbar + table skeletons for the initial Suspense fallback, a table-only skeleton during read-path transitions, and search focus restoration after query-driven remounts.
   - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
@@ -277,3 +281,4 @@ For every step card below, maintain the following fields:
 - Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.
 - Started Step 5 and completed Phase 1 (Data Layer Foundation) by adding typed product mutation clients, a shared server-side product listing query, refactoring `GET /api/products` to reuse it, and covering the new client with unit tests.
 - Reorganized shared contracts into `src/lib/products`, `src/lib/movements`, and `src/lib/users`, moved the product client beside the product query layer, and left `src/lib/api` as cross-domain API infrastructure.
+- Refined Step 5 Phase 2 UX without advancing to Phase 3 by adding search-aware empty states, full-page skeleton loading for the initial Suspense fallback, table-only pending skeletons during read transitions, and search focus restoration.

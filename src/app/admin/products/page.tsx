@@ -9,6 +9,7 @@ import { getCurrentUser } from '@/lib/auth-helpers'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { ProductsAdminContent } from './_components/products-admin-content'
+import { ProductsPageSkeleton } from './_components/products-page-skeleton'
 
 type ProductsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -22,19 +23,6 @@ export function normalizeProductsSearchParams(
       key,
       Array.isArray(entry) ? entry[0] : entry,
     ]),
-  )
-}
-
-function ProductsAdminLoadingState() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Loading products</CardTitle>
-        <CardDescription>
-          Pulling the latest inventory records for the admin dashboard.
-        </CardDescription>
-      </CardHeader>
-    </Card>
   )
 }
 
@@ -84,7 +72,7 @@ export default async function ProductsAdminPage({
         </p>
       </div>
 
-      <Suspense fallback={<ProductsAdminLoadingState />}>
+      <Suspense fallback={<ProductsPageSkeleton />}>
         <ProductsAdminContent query={normalizedQuery} />
       </Suspense>
     </div>

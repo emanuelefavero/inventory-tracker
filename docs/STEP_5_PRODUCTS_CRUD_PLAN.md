@@ -32,11 +32,12 @@ This step must stay lean and interview-quality:
 - CRUD mutations through existing API route handlers
 - Search/sort/pagination controls
 - Toast notifications for mutation feedback
-- Empty state for first-time use
+- Search-aware empty states for first-time use and no-result searches
 - Route-local Zustand store for UI orchestration (dialogs + selected row targets)
 - Debounced search with `useTransition` for non-blocking URL updates
 - Accessibility: `aria-label` on icon buttons, semantic table HTML, keyboard-navigable actions
 - Responsive layout basics (horizontal scroll table, stacked toolbar on mobile)
+- Skeleton loading states for the initial Suspense fallback and read-path transitions
 - Unit tests for page/store/client orchestration
 
 ### Out of Scope (Step 5)
@@ -47,7 +48,6 @@ This step must stay lean and interview-quality:
 - Analytics widgets (Step 8)
 - Role management UI (Step 9)
 - Full authenticated UI E2E with Clerk test auth setup
-- Skeleton loading components (deferred to Step 10)
 - SKU uniqueness error handling at API level (deferred to Step 10)
 - Tooltip hints on table action buttons (deferred to Step 10)
 
@@ -81,9 +81,10 @@ This step must stay lean and interview-quality:
 1. Request to `/admin/products?search=...&sortBy=...&sortOrder=...&page=...&limit=...`
 2. Server page parses query params
 3. Server query function reads products from Prisma
-4. Page wraps data-fetching in `<Suspense fallback={<div>Loading...</div>}>` for streaming
+4. Page wraps data-fetching in `<Suspense fallback={<ProductsPageSkeleton />}>` for streaming
 5. Page renders client shell with initial data + current query state
-6. If no products exist, renders empty state with "Create your first product" CTA
+6. If the catalog is empty, renders an empty state with "Create your first product" CTA
+7. If a search returns zero matches, renders a search-specific empty state with no create CTA
 
 ## 4.2 Mutations (Client Path)
 
@@ -152,6 +153,9 @@ Create a route-local store at:
 
 - `src/app/admin/products/_components/products-toolbar.tsx`
 - `src/app/admin/products/_components/products-table.tsx`
+- `src/app/admin/products/_components/products-toolbar-skeleton.tsx`
+- `src/app/admin/products/_components/products-table-skeleton.tsx`
+- `src/app/admin/products/_components/products-page-skeleton.tsx`
 - `src/app/admin/products/_components/product-form-dialog.tsx`
 - `src/app/admin/products/_components/delete-product-dialog.tsx`
 - `src/app/admin/products/_components/products-empty-state.tsx`
@@ -226,15 +230,17 @@ Create a route-local store at:
 ### Debounced Search
 
 - Search input updates a local `useState` value immediately for responsive typing
-- After 300ms of no typing, the debounced value triggers a URL param update via `router.push()`
-- Wrap `router.push()` in `startTransition()` so the current UI remains interactive while the server re-renders
+- After 300ms of no typing, the debounced value triggers a URL param update via `router.replace()`
+- Wrap `router.replace()` in `startTransition()` so the current UI remains interactive while the server re-renders
+- When a search is active, the input focus is restored after the query-driven remount so repeated filtering stays keyboard-friendly
 
 ### Sort & Page Changes
 
 - Sort column/order changes update URL params immediately (no debounce needed)
 - Page prev/next changes update URL params immediately
 - All URL param changes wrapped in `startTransition()` for non-blocking updates
-- `isPending` from `useTransition` can drive a subtle loading indicator (e.g., reduced table opacity)
+- During pending read-path transitions, keep the toolbar mounted and replace only the table area with `ProductsTableSkeleton`
+- During the initial server Suspense load, render the full `ProductsPageSkeleton` so the toolbar and table reserve layout together
 
 ---
 
@@ -248,7 +254,7 @@ Create a route-local store at:
 
 ### Pagination Display
 
-The API returns `pageInfo` with `page`, `limit`, `totalCount`, `totalPages`. Display:
+ The API returns `pageInfo` with `page`, `limit`, `totalItems`, `totalPages`. Display:
 
 - "Showing X–Y of Z products" text
 - Previous / Next buttons (disabled at bounds)
@@ -323,13 +329,16 @@ Minimal responsive awareness for MVP:
 3. Client orchestrator:
    - Search debounce triggers URL update after delay
    - Sort/page changes update URL state immediately
+   - Search input focus is preserved after search-driven remounts
+   - Pending read-path transitions swap the table area to a skeleton while the toolbar remains visible
    - Mutation success triggers toast + close + refresh
    - Mutation errors show toast with safe error message
 4. API client wrappers:
    - Correct handling of `ApiResult` success/error
 5. Empty state:
-   - Renders when product list is empty
-   - CTA button triggers create dialog
+   - Renders catalog-empty state when no products exist
+   - Renders a search-specific no-results state without the create CTA when a filter returns zero matches
+   - CTA button triggers create dialog only for the true catalog-empty state
 
 ## 13.2 E2E
 
@@ -347,7 +356,7 @@ Minimal responsive awareness for MVP:
    **Mitigation:** Keep list fetching only on server; use `router.refresh()` after mutations.
 
 3. **Risk:** Step inflation
-   **Mitigation:** Defer advanced tables, global state, skeleton components, and analytics to future steps.
+   **Mitigation:** Defer advanced tables, global state, and analytics to future steps while still allowing targeted read-path UX polish inside Phase 2.
 
 4. **Risk:** Validation drift between client forms and API
    **Mitigation:** Reuse existing zod schemas from `src/lib/products/schemas.ts` in form `zodResolver`.
@@ -361,7 +370,7 @@ From `Step 5 — Products CRUD (Admin)`:
 1. **Admin can create, edit, delete, and list products**
    - Covered by page + dialogs + mutation flows + server list fetch.
    - Mutations provide toast feedback on success and error.
-   - Empty state guides first-time users to create their first product.
+   - Empty states distinguish between a truly empty catalog and a no-results search.
 
 2. **Product table supports search/sort**
    - Covered by toolbar controls bound to URL query and server query parsing.
@@ -403,11 +412,12 @@ From `Step 5 — Products CRUD (Admin)`:
 2. Create `src/app/admin/products/page.tsx` — server page with RBAC gate (`requireAdmin`), query param parsing, Suspense boundary, and initial data fetch
 3. Create `src/app/admin/products/_components/products-admin-client.tsx` — client shell receiving server data and rendering toolbar + table
 4. Create `src/app/admin/products/_components/products-toolbar.tsx` — debounced search input (300ms) + sort select, all URL updates wrapped in `startTransition()`
-5. Create `src/app/admin/products/_components/products-table.tsx` — semantic table with pagination display ("Showing X–Y of Z"), row action dropdown (Edit/Delete items call Zustand actions but dialogs don't exist yet)
-6. Create `src/app/admin/products/_components/products-empty-state.tsx` — empty state with CTA button that calls `openCreate()`
-7. Write `src/app/admin/products/page.test.tsx`, `products-admin-client.test.tsx`, `use-products-admin-ui-store.test.ts`
+5. Create `src/app/admin/products/_components/products-table.tsx` — semantic table with pagination display ("Showing X–Y of Z"), low-stock visual cues, and responsive horizontal overflow handling
+6. Create `src/app/admin/products/_components/products-empty-state.tsx` — search-aware empty states: catalog-empty with CTA, and no-results search state without CTA
+7. Create `src/app/admin/products/_components/products-toolbar-skeleton.tsx`, `products-table-skeleton.tsx`, and `products-page-skeleton.tsx` — skeletons for initial Suspense fallback and table-only pending transitions
+8. Write `src/app/admin/products/page.test.tsx`, `products-admin-client.test.tsx`, `use-products-admin-ui-store.test.ts`
 
-**Verification:** Navigate to `/admin/products` in the running app. Real product table renders with data from the DB. Search, sort, and pagination work. Clicking row action dropdown items does nothing visible yet (dialogs don't exist). Empty state appears when DB has no products.
+**Verification:** Navigate to `/admin/products` in the running app. Real product table renders with data from the DB. Search, sort, and pagination work. Initial Suspense load shows toolbar + table skeletons. Pending search transitions swap only the table area to a skeleton. The catalog-empty state appears when the DB has no products, while search with zero matches renders the search-specific no-results state.
 
 ---
 
@@ -458,18 +468,13 @@ From `Step 5 — Products CRUD (Admin)`:
 
 The following improvements are planned but intentionally deferred to avoid Step 5 inflation:
 
-1. **Skeleton Fallback Component**
-   - Create `products-table-skeleton.tsx` with skeleton rows matching the table layout
-   - Replace the simple `<Suspense fallback={<div>Loading...</div>}>` with the skeleton component
-   - Provides a polished loading experience during server data fetching
-
-2. **SKU Uniqueness Error Handling**
+1. **SKU Uniqueness Error Handling**
    - Catch Prisma `P2002` unique constraint error in the `POST /api/products` handler
    - Return a specific `DUPLICATE_SKU` error code (or reuse `INVALID_REQUEST_BODY` with field detail)
    - Map the error in `client.ts` to show a field-level form error ("SKU already exists")
    - Currently falls through to `INTERNAL_ERROR` (500) — functional but not user-friendly
 
-3. **Tooltip on Table Row Actions**
+2. **Tooltip on Table Row Actions**
    - Add shadcn `tooltip` component to the icon button in each table row's action dropdown trigger
    - Provides hover hint (e.g., "Product actions") for discoverability
 
@@ -481,4 +486,4 @@ The following improvements are planned but intentionally deferred to avoid Step 
 - The architecture keeps MVP speed while staying clean, scalable, and interview-ready.
 - Toast notifications and loading states provide professional mutation feedback without complexity.
 - Reusing existing zod schemas eliminates validation drift between client and server.
-- Deferred items in Section 17 are tracked for Step 10 (UX Hardening) to ensure nothing is forgotten.
+- The remaining deferred items in Section 17 are tracked for Step 10 (UX Hardening) to ensure nothing is forgotten.

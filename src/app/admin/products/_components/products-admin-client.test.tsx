@@ -15,6 +15,12 @@ vi.mock('next/navigation', () => ({
   useRouter: () => useRouterMock(),
 }))
 
+vi.mock('../_store/use-products-admin-ui-store', () => ({
+  useProductsAdminUIStore: (
+    selector: (s: Record<string, unknown>) => unknown,
+  ) => selector({ openCreate: () => {} }),
+}))
+
 const makeQuery = (
   overrides: Partial<ProductsAdminQueryState> = {},
 ): ProductsAdminQueryState => ({
@@ -78,6 +84,39 @@ describe('ProductsAdminClient', () => {
     )
   })
 
+  it('clears search when the clear button is clicked', () => {
+    render(
+      <ProductsAdminClient
+        initialQuery={makeQuery()}
+        items={[makeProduct()]}
+        pageInfo={{ page: 1, limit: 20, totalItems: 1, totalPages: 1 }}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: /clear search/i }))
+
+    vi.advanceTimersByTime(300)
+    expect(replaceMock).toHaveBeenCalledWith(
+      '/admin/products?sortBy=name&sortOrder=asc',
+      { scroll: false },
+    )
+  })
+
+  it('search input remains interactive during transitions', () => {
+    render(
+      <ProductsAdminClient
+        initialQuery={makeQuery()}
+        items={[makeProduct()]}
+        pageInfo={{ page: 2, limit: 20, totalItems: 30, totalPages: 2 }}
+      />,
+    )
+
+    const searchInput = screen.getByRole('textbox', {
+      name: /search products/i,
+    })
+    expect(searchInput).not.toHaveProperty('disabled', true)
+  })
+
   it('updates sort state immediately and resets page to 1', () => {
     render(
       <ProductsAdminClient
@@ -125,7 +164,7 @@ describe('ProductsAdminClient', () => {
     )
   })
 
-  it('renders the empty state when there are no items', () => {
+  it('renders the catalog empty state when there are no items and no search', () => {
     render(
       <ProductsAdminClient
         initialQuery={makeQuery({ page: 1, search: undefined })}
@@ -135,6 +174,24 @@ describe('ProductsAdminClient', () => {
     )
 
     expect(screen.getByText('No products yet')).toBeDefined()
+    expect(
+      screen.getByRole('button', { name: /create your first product/i }),
+    ).toBeDefined()
+  })
+
+  it('renders the search empty state when search returns no results', () => {
+    render(
+      <ProductsAdminClient
+        initialQuery={makeQuery({ page: 1, search: 'nonexistent' })}
+        items={[]}
+        pageInfo={{ page: 1, limit: 20, totalItems: 0, totalPages: 1 }}
+      />,
+    )
+
+    expect(screen.getByText('No matching products')).toBeDefined()
+    expect(
+      screen.queryByRole('button', { name: /create your first product/i }),
+    ).toBeNull()
   })
 
   it('renders the table summary using totalItems', () => {
@@ -147,5 +204,32 @@ describe('ProductsAdminClient', () => {
     )
 
     expect(screen.getByText('Showing 21-21 of 21 products')).toBeDefined()
+  })
+
+  it('renders category as a badge', () => {
+    render(
+      <ProductsAdminClient
+        initialQuery={makeQuery({ page: 1 })}
+        items={[makeProduct()]}
+        pageInfo={{ page: 1, limit: 20, totalItems: 1, totalPages: 1 }}
+      />,
+    )
+
+    const badge = screen.getByText('Peripherals')
+    expect(badge.dataset.slot).toBe('badge')
+  })
+
+  it('applies destructive style to low-stock quantities', () => {
+    const lowStockProduct = { ...makeProduct(), quantity: 3 }
+    render(
+      <ProductsAdminClient
+        initialQuery={makeQuery({ page: 1 })}
+        items={[lowStockProduct]}
+        pageInfo={{ page: 1, limit: 20, totalItems: 1, totalPages: 1 }}
+      />,
+    )
+
+    const cell = screen.getByText('3')
+    expect(cell.className).toContain('text-destructive')
   })
 })

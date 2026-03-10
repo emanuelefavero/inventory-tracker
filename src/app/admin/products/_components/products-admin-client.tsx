@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { ProductsEmptyState } from './products-empty-state'
 import { ProductsTable } from './products-table'
+import { ProductsTableSkeleton } from './products-table-skeleton'
 import { ProductsSortBy, ProductsToolbar } from './products-toolbar'
 
 export type ProductsAdminQueryState = {
@@ -33,11 +34,26 @@ export function ProductsAdminClient({
   const [searchValue, setSearchValue] = useState(initialQuery.search ?? '')
   const isFirstSearchEffect = useRef(true)
 
+  // Destructure primitives for stable useCallback deps
+  const {
+    limit: iqLimit,
+    page: iqPage,
+    search: iqSearch,
+    sortBy: iqSortBy,
+    sortOrder: iqSortOrder,
+  } = initialQuery
+
+  const hasActiveSearch = Boolean(iqSearch?.trim())
+
   const updateQuery = useCallback(
     (nextValues: Partial<ProductsAdminQueryState>, resetPage: boolean) => {
       const params = new URLSearchParams()
       const nextQuery: ProductsAdminQueryState = {
-        ...initialQuery,
+        limit: iqLimit,
+        page: iqPage,
+        search: iqSearch,
+        sortBy: iqSortBy,
+        sortOrder: iqSortOrder,
         ...nextValues,
         ...(resetPage ? { page: 1 } : {}),
       }
@@ -69,8 +85,14 @@ export function ProductsAdminClient({
         router.replace(href, { scroll: false })
       })
     },
-    [initialQuery, pathname, router],
+    [iqLimit, iqPage, iqSearch, iqSortBy, iqSortOrder, pathname, router],
   )
+
+  // Stable ref so the debounce effect never restarts due to updateQuery identity
+  const updateQueryRef = useRef(updateQuery)
+  useEffect(() => {
+    updateQueryRef.current = updateQuery
+  }, [updateQuery])
 
   useEffect(() => {
     if (isFirstSearchEffect.current) {
@@ -79,20 +101,15 @@ export function ProductsAdminClient({
     }
 
     const timeoutId = window.setTimeout(() => {
-      if (searchValue === (initialQuery.search ?? '')) {
+      if (searchValue === (iqSearch ?? '')) {
         return
       }
 
-      updateQuery(
-        {
-          search: searchValue,
-        },
-        true,
-      )
+      updateQueryRef.current({ search: searchValue }, true)
     }, 300)
 
     return () => window.clearTimeout(timeoutId)
-  }, [initialQuery.search, searchValue, updateQuery])
+  }, [iqSearch, searchValue])
 
   function handleSearchChange(value: string) {
     setSearchValue(value)
@@ -105,7 +122,7 @@ export function ProductsAdminClient({
   function handleSortOrderToggle() {
     updateQuery(
       {
-        sortOrder: initialQuery.sortOrder === 'asc' ? 'desc' : 'asc',
+        sortOrder: iqSortOrder === 'asc' ? 'desc' : 'asc',
       },
       true,
     )
@@ -127,6 +144,25 @@ export function ProductsAdminClient({
     updateQuery({ page: pageInfo.page + 1 }, false)
   }
 
+  function renderContent() {
+    if (isPending) {
+      return <ProductsTableSkeleton />
+    }
+
+    if (items.length === 0) {
+      return <ProductsEmptyState hasActiveSearch={hasActiveSearch} />
+    }
+
+    return (
+      <ProductsTable
+        items={items}
+        onNextPage={handleNextPage}
+        onPreviousPage={handlePreviousPage}
+        pageInfo={pageInfo}
+      />
+    )
+  }
+
   return (
     <div className='space-y-6'>
       <ProductsToolbar
@@ -135,21 +171,11 @@ export function ProductsAdminClient({
         onSortByChange={handleSortByChange}
         onSortOrderToggle={handleSortOrderToggle}
         searchValue={searchValue}
-        sortBy={initialQuery.sortBy ?? 'updatedAt'}
-        sortOrder={initialQuery.sortOrder ?? 'desc'}
+        sortBy={iqSortBy ?? 'updatedAt'}
+        sortOrder={iqSortOrder ?? 'desc'}
       />
 
-      {items.length === 0 ? (
-        <ProductsEmptyState />
-      ) : (
-        <ProductsTable
-          isPending={isPending}
-          items={items}
-          onNextPage={handleNextPage}
-          onPreviousPage={handlePreviousPage}
-          pageInfo={pageInfo}
-        />
-      )}
+      {renderContent()}
     </div>
   )
 }

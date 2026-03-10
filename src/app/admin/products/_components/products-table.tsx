@@ -1,5 +1,6 @@
 'use client'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -11,13 +12,16 @@ import {
 } from '@/components/ui/table'
 import { PageInfo } from '@/lib/api/types'
 import { ProductDetail } from '@/lib/products/types'
+import { cn } from '@/lib/utils'
+
+const LOW_STOCK_THRESHOLD = 5
 
 type ProductsTableProps = {
-  isPending: boolean
   items: ProductDetail[]
   onNextPage: () => void
   onPreviousPage: () => void
   pageInfo: PageInfo
+  disabled?: boolean
 }
 
 const updatedAtFormatter = new Intl.DateTimeFormat('en', {
@@ -26,11 +30,11 @@ const updatedAtFormatter = new Intl.DateTimeFormat('en', {
 })
 
 export function ProductsTable({
-  isPending,
   items,
   onNextPage,
   onPreviousPage,
   pageInfo,
+  disabled,
 }: ProductsTableProps) {
   const startItem =
     pageInfo.totalItems === 0 ? 0 : (pageInfo.page - 1) * pageInfo.limit + 1
@@ -38,7 +42,7 @@ export function ProductsTable({
 
   return (
     <div className='space-y-4'>
-      <div className={isPending ? 'opacity-70 transition-opacity' : undefined}>
+      <div className='overflow-x-auto'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -51,11 +55,21 @@ export function ProductsTable({
           </TableHeader>
           <TableBody>
             {items.map((product) => (
-              <TableRow key={product.id}>
+              <TableRow key={product.id} className='hover:bg-muted/50'>
                 <TableCell className='font-medium'>{product.sku}</TableCell>
                 <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell className='text-right'>{product.quantity}</TableCell>
+                <TableCell>
+                  <Badge variant='secondary'>{product.category}</Badge>
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    'text-right',
+                    product.quantity <= LOW_STOCK_THRESHOLD &&
+                      'font-medium text-destructive',
+                  )}
+                >
+                  {product.quantity}
+                </TableCell>
                 <TableCell>
                   {updatedAtFormatter.format(new Date(product.updatedAt))}
                 </TableCell>
@@ -73,8 +87,9 @@ export function ProductsTable({
         <div className='flex items-center gap-2'>
           <Button
             aria-label='Go to previous products page'
-            disabled={isPending || pageInfo.page <= 1}
+            disabled={disabled || pageInfo.page <= 1}
             onClick={onPreviousPage}
+            size='sm'
             type='button'
             variant='outline'
           >
@@ -85,8 +100,9 @@ export function ProductsTable({
           </span>
           <Button
             aria-label='Go to next products page'
-            disabled={isPending || pageInfo.page >= pageInfo.totalPages}
+            disabled={disabled || pageInfo.page >= pageInfo.totalPages}
             onClick={onNextPage}
+            size='sm'
             type='button'
             variant='outline'
           >

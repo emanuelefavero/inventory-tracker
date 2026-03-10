@@ -1,3 +1,6 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -5,22 +8,48 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { PlusIcon, SearchXIcon } from 'lucide-react'
+import { useProductsAdminUIStore } from '../_store/use-products-admin-ui-store'
 
-export function ProductsEmptyState() {
+type ProductsEmptyStateProps = {
+  hasActiveSearch: boolean
+}
+
+export function ProductsEmptyState({
+  hasActiveSearch,
+}: ProductsEmptyStateProps) {
+  const openCreate = useProductsAdminUIStore((s) => s.openCreate)
+
+  if (hasActiveSearch) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className='flex items-center gap-2'>
+            <SearchXIcon className='size-5 text-muted-foreground' />
+            <CardTitle>No matching products</CardTitle>
+          </div>
+          <CardDescription>
+            No products matched your search. Try a different keyword or clear
+            the search filter.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>No products yet</CardTitle>
         <CardDescription>
-          Your catalog is empty. Products will appear here once inventory is
-          added.
+          Your catalog is empty. Create your first product to get started.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p className='text-sm text-muted-foreground'>
-          Search, sorting, and pagination are ready for the first batch of
-          products.
-        </p>
+        <Button onClick={openCreate} type='button'>
+          <PlusIcon />
+          Create your first product
+        </Button>
       </CardContent>
     </Card>
   )

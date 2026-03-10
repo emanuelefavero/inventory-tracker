@@ -9,7 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowDownAZIcon, ArrowUpAZIcon, SearchIcon } from 'lucide-react'
+import { ArrowDownAZIcon, ArrowUpAZIcon, SearchIcon, XIcon } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 
 export type ProductsSortBy =
   | 'createdAt'
@@ -47,6 +48,15 @@ export function ProductsToolbar({
   sortBy,
   sortOrder,
 }: ProductsToolbarProps) {
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Restore focus after key-driven remount when search is active
+  useEffect(() => {
+    if (searchValue.length > 0) {
+      searchInputRef.current?.focus()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
       <div className='relative w-full sm:max-w-sm'>
@@ -55,13 +65,23 @@ export function ProductsToolbar({
           className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground'
         />
         <Input
+          ref={searchInputRef}
           aria-label='Search products'
-          className='pl-9'
-          disabled={isPending}
+          className='pr-9 pl-9'
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder='Search by SKU or name'
           value={searchValue}
         />
+        {searchValue.length > 0 && (
+          <button
+            aria-label='Clear search'
+            className='absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground'
+            onClick={() => onSearchChange('')}
+            type='button'
+          >
+            <XIcon className='size-4' />
+          </button>
+        )}
       </div>
 
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
