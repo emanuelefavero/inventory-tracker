@@ -7,6 +7,7 @@ This file is the single source of truth for implementing the private inventory d
 - Work one step at a time.
 - Keep exactly one active implementation step in `IN_PROGRESS`.
 - After completing any step, immediately update this file before ending work.
+- When a step changes architecture, update `docs/ARCHITECTURE.md` in the same task before closing the step.
 - Add evidence (files touched, PR link, commit hash, screenshots) for each completed step.
 
 ## Step Update Protocol (Mandatory)
@@ -22,7 +23,8 @@ For every step card below, maintain the following fields:
 
 1. Mark the step `DONE` only when all acceptance criteria pass.
 2. Update `Next Active Step` to the next `TODO` card.
-3. If blocked, set `Status: BLOCKED` and document blocker + decision needed.
+3. If the completed work changes architecture, update `docs/ARCHITECTURE.md` before marking the step complete.
+4. If blocked, set `Status: BLOCKED` and document blocker + decision needed.
 
 ## Next Active Step
 
@@ -159,6 +161,8 @@ For every step card below, maintain the following fields:
   - `src/app/admin/products/_components/products-empty-state.tsx`
   - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
   - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
+  - `docs/ARCHITECTURE.md`
+  - `AGENTS.md`
   - `npm run test -- src/app/admin/products/page.test.tsx src/app/admin/products/_components/products-admin-client.test.tsx src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
   - `npm run test -- src/lib/products/client.test.ts src/app/api/products/route.test.ts`
   - `npm run test`
@@ -175,6 +179,8 @@ For every step card below, maintain the following fields:
   - The admin page now redirects unauthenticated users to `/`, renders an on-route blocked state for authenticated non-admin users, and reads data directly from `src/lib/products/queries.ts` instead of loopback-fetching the internal API route.
   - Added targeted unit coverage for page auth/query normalization, client query orchestration, and the route-local Zustand store; verified the new Phase 2 suite and scoped lint checks pass.
   - Refined Phase 2 UX with a search-aware no-results state, composite toolbar + table skeletons for the initial Suspense fallback, a table-only skeleton during read-path transitions, and search focus restoration after query-driven remounts.
+  - Added a repo-level architecture document in `docs/ARCHITECTURE.md` with Mermaid diagrams for the current system context, admin products read path, backend/API surface, data model, and Step 5 implementation status.
+  - Added standing maintenance rules in `AGENTS.md` and this execution plan so architecture-affecting work updates `docs/ARCHITECTURE.md` in the same task.
   - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
