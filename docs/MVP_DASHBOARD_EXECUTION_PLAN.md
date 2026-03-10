@@ -27,7 +27,7 @@ For every step card below, maintain the following fields:
 
 ## Next Active Step
 
-- `Step 5 — Products CRUD (Admin), Phase 2 — Read Path`
+- `Step 5 — Products CRUD (Admin), Phase 3 — Create & Edit Mutations`
 
 ---
 
@@ -147,8 +147,20 @@ For every step card below, maintain the following fields:
   - `src/lib/users/schemas.ts`
   - `src/lib/users/types.ts`
   - `src/app/api/products/route.ts`
+  - `src/app/admin/products/page.tsx`
+  - `src/app/admin/products/page.test.tsx`
+  - `src/app/admin/products/_components/products-admin-content.tsx`
+  - `src/app/admin/products/_components/products-admin-client.tsx`
+  - `src/app/admin/products/_components/products-admin-client.test.tsx`
+  - `src/app/admin/products/_components/products-toolbar.tsx`
+  - `src/app/admin/products/_components/products-table.tsx`
+  - `src/app/admin/products/_components/products-empty-state.tsx`
+  - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
+  - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
+  - `npm run test -- src/app/admin/products/page.test.tsx src/app/admin/products/_components/products-admin-client.test.tsx src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
   - `npm run test -- src/lib/products/client.test.ts src/app/api/products/route.test.ts`
   - `npm run test`
+  - `npm run lint -- src/app/admin/products src/app/admin/products/_components src/app/admin/products/_store`
   - `npm run lint`
 - **Notes**:
   - Completed Phase 1 (Data Layer Foundation) from `docs/STEP_5_PRODUCTS_CRUD_PLAN.md`.
@@ -157,7 +169,10 @@ For every step card below, maintain the following fields:
   - Added API client unit tests for success, error, and safe fallback handling.
   - Refactored shared contracts into domain folders under `src/lib/products`, `src/lib/movements`, and `src/lib/users`, leaving `src/lib/api` for cross-domain API infrastructure only.
   - Verified the full Vitest suite passes after the Phase 1 data-layer changes.
-  - Next work starts with Phase 2 (Read Path) and should stop at the next phase boundary unless explicitly expanded.
+  - Completed Phase 2 (Read Path) by adding the server-first `/admin/products` route, a nested async server content component, a thin client shell for URL-driven search/sort/pagination, an empty state, and a preparatory route-local Zustand UI store.
+  - The admin page now redirects unauthenticated users to `/`, renders an on-route blocked state for authenticated non-admin users, and reads data directly from `src/lib/products/queries.ts` instead of loopback-fetching the internal API route.
+  - Added targeted unit coverage for page auth/query normalization, client query orchestration, and the route-local Zustand store; verified the new Phase 2 suite and scoped lint checks pass.
+  - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
 
@@ -258,6 +273,7 @@ For every step card below, maintain the following fields:
 - Added TSDoc documentation with `@example` usage snippets to all API route handlers to improve maintainability and onboarding.
 - Hardened checkout route concurrency by switching to an atomic conditional stock decrement to prevent oversell under parallel requests; updated checkout unit tests for guarded update flow.
 - Refined checkout/return validation mapping so non-quantity payload schema errors return `INVALID_REQUEST_BODY` while quantity-only violations return `INVALID_MOVEMENT_QUANTITY`; added unit tests for the split behavior.
+- Completed Step 5 Phase 2 by implementing the admin products read path at `/admin/products` with server-first data loading, URL-driven search/sort/pagination, empty state, and route-local UI store coverage.
 - Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.
 - Started Step 5 and completed Phase 1 (Data Layer Foundation) by adding typed product mutation clients, a shared server-side product listing query, refactoring `GET /api/products` to reuse it, and covering the new client with unit tests.
 - Reorganized shared contracts into `src/lib/products`, `src/lib/movements`, and `src/lib/users`, moved the product client beside the product query layer, and left `src/lib/api` as cross-domain API infrastructure.
