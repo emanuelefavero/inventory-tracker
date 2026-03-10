@@ -191,7 +191,7 @@ Create a route-local store at:
 ## 6.2 Modify
 
 - `src/components/layout/header.tsx` (admin navigation link to `/admin/products`)
-- `docs/MVP_DASHBOARD_EXECUTION_PLAN.md` (step status/evidence/changelog when implementation is completed)
+- `docs/MVP_DASHBOARD_EXECUTION_PLAN.md` (step status/evidence when implementation is completed)
 
 ---
 
@@ -254,7 +254,7 @@ Create a route-local store at:
 
 ### Pagination Display
 
- The API returns `pageInfo` with `page`, `limit`, `totalItems`, `totalPages`. Display:
+The API returns `pageInfo` with `page`, `limit`, `totalItems`, `totalPages`. Display:
 
 - "Showing X–Y of Z products" text
 - Previous / Next buttons (disabled at bounds)
@@ -458,7 +458,7 @@ From `Step 5 — Products CRUD (Admin)`:
 2. Run `npm run test` — all unit tests must pass
 3. Run `npm run lint` — no lint errors
 4. Run `npm run build` (optional but recommended)
-5. Update `docs/MVP_DASHBOARD_EXECUTION_PLAN.md` — mark Step 5 `DONE`, update `Evidence`, `Notes`, `Next Active Step`, and add an `Execution Changelog` entry
+5. Update `docs/MVP_DASHBOARD_EXECUTION_PLAN.md` — mark Step 5 `DONE`, update `Evidence`, `Notes`, `Next Active Step`
 
 **Verification:** Admin sees the nav link in the header. All checks pass. Execution plan reflects Step 5 as DONE.
 

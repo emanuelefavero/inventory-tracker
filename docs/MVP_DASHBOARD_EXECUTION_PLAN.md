@@ -22,8 +22,7 @@ For every step card below, maintain the following fields:
 
 1. Mark the step `DONE` only when all acceptance criteria pass.
 2. Update `Next Active Step` to the next `TODO` card.
-3. Add one line to `Execution Changelog` describing what finished.
-4. If blocked, set `Status: BLOCKED` and document blocker + decision needed.
+3. If blocked, set `Status: BLOCKED` and document blocker + decision needed.
 
 ## Next Active Step
 
@@ -242,7 +241,7 @@ For every step card below, maintain the following fields:
 - RBAC: ADMIN full CRUD + role management; USER read products + checkout/return flows.
 - Return model: opposite movement (`OUT` for checkout, `IN` for return).
 - Data layer: Route Handlers + `fetch`.
-- Libraries now: adopt `zod`; defer GraphQL and heavy global state libs unless needed.
+- Libraries now: adopt `zod`; defer GraphQL unless needed.
 - Optional later: TanStack Query for interactive/cached client-heavy views.
 
 ## Suggested Endpoint Surface (Planning Reference)
@@ -256,29 +255,3 @@ For every step card below, maintain the following fields:
 - `POST /api/movements/return` (USER/ADMIN)
 - `GET /api/users`
 - `PATCH /api/users/:id/role` (ADMIN)
-
----
-
-## Execution Changelog
-
-- Initial execution plan created and approved scope captured.
-- Completed Step 1 (RBAC Contract + User Flows) and advanced Next Active Step to Step 2 (API Design).
-- Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
-- Completed Step 3 (Validation Layer with zod) and implemented API Route Handlers with standardized Result/error responses.
-- Corrected malformed endpoint matrix Markdown table in API contract doc while preserving endpoint contracts.
-- Inserted a new Step 4 testing gate for critical API Route Handler coverage (Vitest + Playwright smoke) and renumbered downstream MVP steps.
-- Resolved npm peer dependency conflict by aligning React/React DOM patch versions with Clerk peer requirements, and made `postinstall` resilient when `DATABASE_URL` is not set; verified installs without force/legacy-peer-deps.
-- Aligned Prisma CLI to Prisma 7 to match runtime packages and validated clean install with consistent Prisma majors.
-- Configured Playwright for Chromium-only E2E on macOS ARM by removing Firefox/WebKit projects and adding Chromium-specific install/run npm scripts.
-- Isolated test runners by scoping Vitest to unit tests and excluding Playwright E2E folders/config so `npm run test` runs unit tests only while `npm run test:e2e` remains Playwright-only.
-- Updated AGENTS guidance with explicit testing conventions: co-located Vitest unit tests beside source files and feature-grouped Playwright E2E tests under `tests/<feature>/`.
-- Added a Testing Quick Start section and a Project Scripts table to README documenting Vitest unit-test co-location and Playwright E2E placement/commands.
-- Completed Step 4 by adding critical Vitest coverage for all API handlers, adding unauthenticated Playwright API smoke tests, and wiring Playwright local baseURL/webServer config.
-- Added TSDoc documentation with `@example` usage snippets to all API route handlers to improve maintainability and onboarding.
-- Hardened checkout route concurrency by switching to an atomic conditional stock decrement to prevent oversell under parallel requests; updated checkout unit tests for guarded update flow.
-- Refined checkout/return validation mapping so non-quantity payload schema errors return `INVALID_REQUEST_BODY` while quantity-only violations return `INVALID_MOVEMENT_QUANTITY`; added unit tests for the split behavior.
-- Completed Step 5 Phase 2 by implementing the admin products read path at `/admin/products` with server-first data loading, URL-driven search/sort/pagination, empty state, and route-local UI store coverage.
-- Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.
-- Started Step 5 and completed Phase 1 (Data Layer Foundation) by adding typed product mutation clients, a shared server-side product listing query, refactoring `GET /api/products` to reuse it, and covering the new client with unit tests.
-- Reorganized shared contracts into `src/lib/products`, `src/lib/movements`, and `src/lib/users`, moved the product client beside the product query layer, and left `src/lib/api` as cross-domain API infrastructure.
-- Refined Step 5 Phase 2 UX without advancing to Phase 3 by adding search-aware empty states, full-page skeleton loading for the initial Suspense fallback, table-only pending skeletons during read transitions, and search focus restoration.

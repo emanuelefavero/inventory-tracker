@@ -82,6 +82,5 @@ After completing any implementation step, update the same file in the same task 
 - Step `Status` changes (`TODO`/`IN_PROGRESS`/`BLOCKED`/`DONE`)
 - `Evidence` and short `Notes`
 - `Next Active Step`
-- `Execution Changelog`
 
 Implementation should proceed one step at a time following the Kanban cards in the execution plan.
