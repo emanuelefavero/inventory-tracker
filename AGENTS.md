@@ -83,6 +83,15 @@ After completing any implementation step, update the same file in the same task 
 - `Evidence` and short `Notes`
 - `Next Active Step`
 
+`Notes` must stay brief and current-step only:
+
+- Keep it to 2-4 bullets max.
+- Write each bullet as a single sentence.
+- Use it for current decisions, blockers, handoff context, or immediate follow-ups only.
+- Do not repeat information already captured in `Evidence`.
+- Summarize the latest state instead of appending a running phase-by-phase history.
+- Put detailed implementation history in a step-specific supporting doc when needed.
+
 Implementation should proceed one step at a time following the Kanban cards in the execution plan.
 
 ## Architecture Documentation (Mandatory)

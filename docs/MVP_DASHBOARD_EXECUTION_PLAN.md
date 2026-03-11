@@ -17,7 +17,16 @@ For every step card below, maintain the following fields:
 - `Status`: `TODO` | `IN_PROGRESS` | `BLOCKED` | `DONE`
 - `Owner`: person executing the step
 - `Evidence`: links to changed files/PR/tests/checks
-- `Notes`: short implementation notes and follow-ups
+- `Notes`: short, current-step handoff notes and immediate follow-ups
+
+`Notes` rules:
+
+- Keep it to 2-4 bullets max.
+- Keep each bullet to one sentence.
+- Include only current-step decisions, blockers, handoff context, or immediate follow-ups.
+- Do not duplicate `Evidence`.
+- Summarize the latest state instead of appending a running implementation history.
+- Move detailed phase history into a step-specific supporting document when needed.
 
 ### Completion Rules
 
@@ -169,18 +178,9 @@ For every step card below, maintain the following fields:
   - `npm run lint -- src/app/admin/products src/app/admin/products/_components src/app/admin/products/_store`
   - `npm run lint`
 - **Notes**:
-  - Completed Phase 1 (Data Layer Foundation) from `docs/STEP_5_PRODUCTS_CRUD_PLAN.md`.
-  - Added typed product mutation fetch wrappers returning `ApiResult<T>` for create, update, and delete flows.
-  - Added a reusable server-side `listProducts` Prisma query with search, sort, and pagination, then aligned `GET /api/products` to reuse it so Step 5 read paths share one query contract.
-  - Added API client unit tests for success, error, and safe fallback handling.
-  - Refactored shared contracts into domain folders under `src/lib/products`, `src/lib/movements`, and `src/lib/users`, leaving `src/lib/api` for cross-domain API infrastructure only.
-  - Verified the full Vitest suite passes after the Phase 1 data-layer changes.
-  - Completed Phase 2 (Read Path) by adding the server-first `/admin/products` route, a nested async server content component, a thin client shell for URL-driven search/sort/pagination, an empty state, and a preparatory route-local Zustand UI store.
-  - The admin page now redirects unauthenticated users to `/`, renders an on-route blocked state for authenticated non-admin users, and reads data directly from `src/lib/products/queries.ts` instead of loopback-fetching the internal API route.
-  - Added targeted unit coverage for page auth/query normalization, client query orchestration, and the route-local Zustand store; verified the new Phase 2 suite and scoped lint checks pass.
-  - Refined Phase 2 UX with a search-aware no-results state, composite toolbar + table skeletons for the initial Suspense fallback, a table-only skeleton during read-path transitions, and search focus restoration after query-driven remounts.
-  - Added a repo-level architecture document in `docs/ARCHITECTURE.md` with Mermaid diagrams for the current system context, admin products read path, backend/API surface, data model, and Step 5 implementation status.
-  - Added standing maintenance rules in `AGENTS.md` and this execution plan so architecture-affecting work updates `docs/ARCHITECTURE.md` in the same task.
+  - Phase 1 and Phase 2 are complete; detailed implementation history lives in the linked evidence and supporting step docs.
+  - The admin products read path is server-first, role-gated, and uses shared query contracts from `src/lib/products/queries.ts`.
+  - Targeted tests and scoped lint checks for the current Step 5 work have already passed per the evidence above.
   - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
