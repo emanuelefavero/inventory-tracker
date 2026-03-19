@@ -28,3 +28,34 @@ export const listProductsQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
 })
+
+type ListProductsQueryInput = Record<string, string | undefined>
+
+export function sanitizeListProductsQuery(
+  query: ListProductsQueryInput,
+): z.infer<typeof listProductsQuerySchema> {
+  const normalizedSearch = query.search?.trim()
+  const normalizedCategory = query.category?.trim()
+
+  const search = listProductsQuerySchema.shape.search.safeParse(
+    normalizedSearch || undefined,
+  )
+  const category = listProductsQuerySchema.shape.category.safeParse(
+    normalizedCategory || undefined,
+  )
+  const sortBy = listProductsQuerySchema.shape.sortBy.safeParse(query.sortBy)
+  const sortOrder = listProductsQuerySchema.shape.sortOrder.safeParse(
+    query.sortOrder,
+  )
+  const page = listProductsQuerySchema.shape.page.safeParse(query.page)
+  const limit = listProductsQuerySchema.shape.limit.safeParse(query.limit)
+
+  return {
+    search: search.success ? search.data : undefined,
+    category: category.success ? category.data : undefined,
+    sortBy: sortBy.success ? sortBy.data : undefined,
+    sortOrder: sortOrder.success ? sortOrder.data : undefined,
+    page: page.success ? page.data : 1,
+    limit: limit.success ? limit.data : 20,
+  }
+}

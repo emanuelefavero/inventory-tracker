@@ -151,6 +151,7 @@ For every step card below, maintain the following fields:
   - `src/lib/products/queries.ts`
   - `src/lib/products/client.test.ts`
   - `src/lib/products/schemas.ts`
+  - `src/lib/products/schemas.test.ts`
   - `src/lib/products/types.ts`
   - `src/lib/movements/schemas.ts`
   - `src/lib/movements/types.ts`
@@ -160,6 +161,7 @@ For every step card below, maintain the following fields:
   - `src/app/admin/products/page.tsx`
   - `src/app/admin/products/page.test.tsx`
   - `src/app/admin/products/_components/products-admin-content.tsx`
+  - `src/app/admin/products/_components/products-admin-content.test.tsx`
   - `src/app/admin/products/_components/products-admin-client.tsx`
   - `src/app/admin/products/_components/products-admin-client.test.tsx`
   - `src/app/admin/products/_components/products-page-skeleton.tsx`
@@ -180,6 +182,7 @@ For every step card below, maintain the following fields:
 - **Notes**:
   - Phase 1 and Phase 2 are complete; detailed implementation history lives in the linked evidence and supporting step docs.
   - The admin products read path is server-first, role-gated, and uses shared query contracts from `src/lib/products/queries.ts`.
+  - Invalid admin product query params now sanitize per field so malformed URLs fall back safely without dropping valid filters or crashing SSR.
   - Targeted tests and scoped lint checks for the current Step 5 work have already passed per the evidence above.
   - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 

@@ -1,5 +1,5 @@
 import { listProducts } from '@/lib/products/queries'
-import { listProductsQuerySchema } from '@/lib/products/schemas'
+import { sanitizeListProductsQuery } from '@/lib/products/schemas'
 import { ProductsAdminClient } from './products-admin-client'
 
 type ProductsAdminContentProps = {
@@ -9,7 +9,7 @@ type ProductsAdminContentProps = {
 export async function ProductsAdminContent({
   query,
 }: ProductsAdminContentProps) {
-  const parsedQuery = listProductsQuerySchema.parse(query)
+  const parsedQuery = sanitizeListProductsQuery(query)
   const data = await listProducts(parsedQuery)
 
   return (
