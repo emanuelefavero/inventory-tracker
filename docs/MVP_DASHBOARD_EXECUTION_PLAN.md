@@ -184,7 +184,7 @@ For every step card below, maintain the following fields:
   - Phase 1 and Phase 2 are complete; detailed implementation history lives in the linked evidence and supporting step docs.
   - The admin products read path is server-first, role-gated, and uses shared query contracts from `src/lib/products/queries.ts`.
   - Invalid admin product query params now sanitize per field so malformed URLs fall back safely without dropping valid filters or crashing SSR.
-  - Local Git hooks now use Husky plus lint-staged to run Prettier only on staged files, which does not change app architecture or Step 5 scope.
+  - Local Git hooks now use Husky plus lint-staged for staged-file formatting and a new pre-push gate for lint plus unit tests.
   - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
