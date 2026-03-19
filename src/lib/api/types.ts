@@ -24,32 +24,3 @@ export type PageInfo = {
   totalItems: number
   totalPages: number
 }
-
-export type ProductSummary = {
-  id: string
-  sku: string
-  name: string
-  category: string
-  quantity: number
-}
-
-export type ProductDetail = ProductSummary & {
-  createdAt: string
-  updatedAt: string
-}
-
-export type MovementItem = {
-  id: string
-  type: 'OUT' | 'IN'
-  quantity: number
-  createdAt: string
-  userId: string
-  productId: string
-}
-
-export type UserSummary = {
-  id: string
-  email: string
-  name: string | null
-  role: 'USER' | 'ADMIN'
-}

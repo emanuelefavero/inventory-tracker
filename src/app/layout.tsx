@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme/theme-provider'
 import { metadata as appMetadata } from '@/config/metadata'
 import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -19,15 +20,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang='en' suppressHydrationWarning>
         <body className='bg-background font-sans text-foreground antialiased'>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Header />
-            <Main>{children}</Main>
-          </ThemeProvider>
+          <Suspense>
+            <ThemeProvider
+              attribute='class'
+              defaultTheme='system'
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Header />
+              <Main>{children}</Main>
+            </ThemeProvider>
+          </Suspense>
         </body>
       </html>
     </ClerkProvider>

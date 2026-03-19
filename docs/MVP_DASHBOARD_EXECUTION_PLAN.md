@@ -7,6 +7,7 @@ This file is the single source of truth for implementing the private inventory d
 - Work one step at a time.
 - Keep exactly one active implementation step in `IN_PROGRESS`.
 - After completing any step, immediately update this file before ending work.
+- When a step changes architecture, update `docs/ARCHITECTURE.md` in the same task before closing the step.
 - Add evidence (files touched, PR link, commit hash, screenshots) for each completed step.
 
 ## Step Update Protocol (Mandatory)
@@ -14,22 +15,29 @@ This file is the single source of truth for implementing the private inventory d
 For every step card below, maintain the following fields:
 
 - `Status`: `TODO` | `IN_PROGRESS` | `BLOCKED` | `DONE`
-- `Owner`: person/agent executing the step
-- `Started on`: YYYY-MM-DD (when moved to `IN_PROGRESS`)
-- `Completed on`: YYYY-MM-DD (when moved to `DONE`)
+- `Owner`: person executing the step
 - `Evidence`: links to changed files/PR/tests/checks
-- `Notes`: short implementation notes and follow-ups
+- `Notes`: short, current-step handoff notes and immediate follow-ups
+
+`Notes` rules:
+
+- Keep it to 2-4 bullets max.
+- Keep each bullet to one sentence.
+- Include only current-step decisions, blockers, handoff context, or immediate follow-ups.
+- Do not duplicate `Evidence`.
+- Summarize the latest state instead of appending a running implementation history.
+- Move detailed phase history into a step-specific supporting document when needed.
 
 ### Completion Rules
 
 1. Mark the step `DONE` only when all acceptance criteria pass.
 2. Update `Next Active Step` to the next `TODO` card.
-3. Add one line to `Execution Changelog` describing what finished.
+3. If the completed work changes architecture, update `docs/ARCHITECTURE.md` before marking the step complete.
 4. If blocked, set `Status: BLOCKED` and document blocker + decision needed.
 
 ## Next Active Step
 
-- `Step 5 — Products CRUD (Admin)`
+- `Step 5 — Products CRUD (Admin), Phase 3 — Create & Edit Mutations`
 
 ---
 
@@ -40,9 +48,7 @@ For every step card below, maintain the following fields:
 #### Step 1 — RBAC Contract + User Flows
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-02
-- **Completed on**: 2026-03-02
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - ADMIN and USER permissions are explicitly documented.
   - Checkout/return flow is documented with expected outcomes.
@@ -57,9 +63,7 @@ For every step card below, maintain the following fields:
 #### Step 2 — API Design (Route Handlers)
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-02
-- **Completed on**: 2026-03-02
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Endpoint matrix finalized for products, movements, and role updates.
   - Auth/role requirement defined per endpoint.
@@ -76,9 +80,7 @@ For every step card below, maintain the following fields:
 #### Step 3 — Validation Layer (`zod`)
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-03
-- **Completed on**: 2026-03-03
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Mutating endpoints validate payloads with `zod`.
   - Validation errors are user-friendly and consistent.
@@ -104,9 +106,7 @@ For every step card below, maintain the following fields:
 #### Step 4 — API Route Handler Critical Tests (Vitest + Playwright Smoke)
 
 - **Status**: DONE
-- **Owner**: Codex + Emanuele
-- **Started on**: 2026-03-03
-- **Completed on**: 2026-03-03
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Critical API route handlers have co-located unit tests (`*.test.ts`) beside source files.
   - E2E smoke tests for API routes exist under `tests/api/` (or `tests/<feature>/`) with `*.spec.ts`.
@@ -141,22 +141,55 @@ For every step card below, maintain the following fields:
 
 #### Step 5 — Products CRUD (Admin)
 
-- **Status**: TODO
-- **Owner**:
-- **Started on**:
-- **Completed on**:
+- **Status**: IN_PROGRESS
+- **Owner**: Emanuele
 - **Acceptance Criteria**:
   - Admin can create, edit, delete, and list products.
   - Product table supports search/sort.
 - **Evidence**:
+  - `src/lib/products/client.ts`
+  - `src/lib/products/queries.ts`
+  - `src/lib/products/client.test.ts`
+  - `src/lib/products/schemas.ts`
+  - `src/lib/products/schemas.test.ts`
+  - `src/lib/products/types.ts`
+  - `src/lib/movements/schemas.ts`
+  - `src/lib/movements/types.ts`
+  - `src/lib/users/schemas.ts`
+  - `src/lib/users/types.ts`
+  - `src/app/api/products/route.ts`
+  - `src/app/admin/products/page.tsx`
+  - `src/app/admin/products/page.test.tsx`
+  - `src/app/admin/products/_components/products-admin-content.tsx`
+  - `src/app/admin/products/_components/products-admin-content.test.tsx`
+  - `src/app/admin/products/_components/products-admin-client.tsx`
+  - `src/app/admin/products/_components/products-admin-client.test.tsx`
+  - `src/app/admin/products/_components/products-page-skeleton.tsx`
+  - `src/app/admin/products/_components/products-toolbar.tsx`
+  - `src/app/admin/products/_components/products-toolbar-skeleton.tsx`
+  - `src/app/admin/products/_components/products-table.tsx`
+  - `src/app/admin/products/_components/products-table-skeleton.tsx`
+  - `src/app/admin/products/_components/products-empty-state.tsx`
+  - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
+  - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
+  - `docs/ARCHITECTURE.md`
+  - `AGENTS.md`
+  - `npm run test -- src/app/admin/products/page.test.tsx src/app/admin/products/_components/products-admin-client.test.tsx src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
+  - `npm run test -- src/lib/products/client.test.ts src/app/api/products/route.test.ts`
+  - `npm run test`
+  - `npm run lint -- src/app/admin/products src/app/admin/products/_components src/app/admin/products/_store`
+  - `npm run lint`
 - **Notes**:
+  - Phase 1 and Phase 2 are complete; detailed implementation history lives in the linked evidence and supporting step docs.
+  - The admin products read path is server-first, role-gated, and uses shared query contracts from `src/lib/products/queries.ts`.
+  - Invalid admin product query params now sanitize per field so malformed URLs fall back safely without dropping valid filters or crashing SSR.
+  - Targeted tests and scoped lint checks for the current Step 5 work have already passed per the evidence above.
+  - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - OUT movement decreases quantity.
   - Return uses opposite IN movement and restores quantity.
@@ -168,8 +201,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Feed shows who moved what and when.
   - Filtering by type/date/user/product works.
@@ -182,8 +213,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Dashboard cards show totals, low-stock count, recent movement KPIs.
   - Data is accurate against current DB state.
@@ -194,8 +223,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Admin can promote/demote users.
   - Role updates stay synced with Clerk metadata.
@@ -208,8 +235,6 @@ For every step card below, maintain the following fields:
 
 - **Status**: TODO
 - **Owner**:
-- **Started on**:
-- **Completed on**:
 - **Acceptance Criteria**:
   - Empty/loading/error states implemented across MVP screens.
   - RBAC checks verified manually (unauthenticated, USER, ADMIN).
@@ -225,7 +250,7 @@ For every step card below, maintain the following fields:
 - RBAC: ADMIN full CRUD + role management; USER read products + checkout/return flows.
 - Return model: opposite movement (`OUT` for checkout, `IN` for return).
 - Data layer: Route Handlers + `fetch`.
-- Libraries now: adopt `zod`; defer GraphQL and heavy global state libs unless needed.
+- Libraries now: adopt `zod`; defer GraphQL unless needed.
 - Optional later: TanStack Query for interactive/cached client-heavy views.
 
 ## Suggested Endpoint Surface (Planning Reference)
@@ -239,25 +264,3 @@ For every step card below, maintain the following fields:
 - `POST /api/movements/return` (USER/ADMIN)
 - `GET /api/users`
 - `PATCH /api/users/:id/role` (ADMIN)
-
----
-
-## Execution Changelog
-
-- 2026-02-27: Initial execution plan created and approved scope captured.
-- 2026-03-02: Completed Step 1 (RBAC Contract + User Flows) and advanced Next Active Step to Step 2 (API Design).
-- 2026-03-02: Completed Step 2 (API Design for Route Handlers) and advanced Next Active Step to Step 3 (Validation Layer with zod).
-- 2026-03-03: Completed Step 3 (Validation Layer with zod) and implemented API Route Handlers with standardized Result/error responses.
-- 2026-03-03: Corrected malformed endpoint matrix Markdown table in API contract doc while preserving endpoint contracts.
-- 2026-03-03: Inserted a new Step 4 testing gate for critical API Route Handler coverage (Vitest + Playwright smoke) and renumbered downstream MVP steps.
-- 2026-03-03: Resolved npm peer dependency conflict by aligning React/React DOM patch versions with Clerk peer requirements, and made `postinstall` resilient when `DATABASE_URL` is not set; verified installs without force/legacy-peer-deps.
-- 2026-03-03: Aligned Prisma CLI to Prisma 7 to match runtime packages and validated clean install with consistent Prisma majors.
-- 2026-03-03: Configured Playwright for Chromium-only E2E on macOS ARM by removing Firefox/WebKit projects and adding Chromium-specific install/run npm scripts.
-- 2026-03-03: Isolated test runners by scoping Vitest to unit tests and excluding Playwright E2E folders/config so `npm run test` runs unit tests only while `npm run test:e2e` remains Playwright-only.
-- 2026-03-03: Updated AGENTS guidance with explicit testing conventions: co-located Vitest unit tests beside source files and feature-grouped Playwright E2E tests under `tests/<feature>/`.
-- 2026-03-03: Added a Testing Quick Start section and a Project Scripts table to README documenting Vitest unit-test co-location and Playwright E2E placement/commands.
-- 2026-03-03: Completed Step 4 by adding critical Vitest coverage for all API handlers, adding unauthenticated Playwright API smoke tests, and wiring Playwright local baseURL/webServer config.
-- 2026-03-03: Added TSDoc documentation with `@example` usage snippets to all API route handlers to improve maintainability and onboarding.
-- 2026-03-04: Hardened checkout route concurrency by switching to an atomic conditional stock decrement to prevent oversell under parallel requests; updated checkout unit tests for guarded update flow.
-- 2026-03-04: Refined checkout/return validation mapping so non-quantity payload schema errors return `INVALID_REQUEST_BODY` while quantity-only violations return `INVALID_MOVEMENT_QUANTITY`; added unit tests for the split behavior.
-- 2026-03-04: Limited `/api/users` list response to `UserSummary` fields (`id`, `email`, `name`, `role`) to avoid exposing internal identifiers like `clerkId`; added unit assertion coverage for the selected projection.

@@ -1,9 +1,9 @@
 import { MovementType } from '@/generated/prisma/client'
 import { mapErrorToResponse } from '@/lib/api/errors'
 import { err, ok } from '@/lib/api/response'
-import { listMovementsQuerySchema } from '@/lib/api/schemas'
 import { parseSearchParamsWithSchema } from '@/lib/api/validation'
 import { requireAuth } from '@/lib/auth-helpers'
+import { listMovementsQuerySchema } from '@/lib/movements/schemas'
 import prisma from '@/lib/prisma'
 
 /**

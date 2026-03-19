@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a Next.js project for an inventory tracking application. It uses TypeScript, Tailwind CSS, and Shadcn UI for the front-end. The project is in its early stages of development. The `README.md` mentions Prisma and Clerk, but they are not yet integrated into the project.
+This is a Next.js project for an inventory tracking application. It uses TypeScript, Tailwind CSS, and Shadcn UI for the front-end. The project is in its early stages of development. Clerk authentication and Prisma/PostgreSQL are already integrated into the current codebase.
 
 ## Building and Running
 
@@ -80,9 +80,25 @@ Before starting any implementation task, always read:
 After completing any implementation step, update the same file in the same task before stopping, including:
 
 - Step `Status` changes (`TODO`/`IN_PROGRESS`/`BLOCKED`/`DONE`)
-- `Started on` / `Completed on`
 - `Evidence` and short `Notes`
 - `Next Active Step`
-- `Execution Changelog`
+
+Keep `Notes` brief and current-step only, and follow the canonical `Notes` rules defined in `docs/MVP_DASHBOARD_EXECUTION_PLAN.md`.
 
 Implementation should proceed one step at a time following the Kanban cards in the execution plan.
+
+## Architecture Documentation (Mandatory)
+
+Before making architecture-affecting changes, always read:
+
+- `docs/ARCHITECTURE.md`
+
+Update `docs/ARCHITECTURE.md` in the same task whenever a change affects:
+
+- top-level pages, route handlers, or user flows
+- server/client boundaries
+- auth or RBAC flow
+- data access patterns, state management boundaries, or external service integrations
+- core domain models or relationships
+
+Purely visual UI changes that do not affect architecture do not require an architecture doc update.

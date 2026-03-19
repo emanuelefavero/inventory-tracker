@@ -1,9 +1,9 @@
 import { mapErrorToResponse } from '@/lib/api/errors'
 import { err, ok } from '@/lib/api/response'
-import { listUsersQuerySchema } from '@/lib/api/schemas'
 import { parseSearchParamsWithSchema } from '@/lib/api/validation'
 import { requireAdmin } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
+import { listUsersQuerySchema } from '@/lib/users/schemas'
 
 /**
  * List users for role management with optional filters and pagination.

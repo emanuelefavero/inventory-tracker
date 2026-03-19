@@ -115,14 +115,16 @@ model InventoryMovement {
 3. Open `.env` and replace the placeholder:
 
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=verify-full"
 ```
 
 Replace with your actual NeonDB connection string (it will look like):
 
 ```env
-DATABASE_URL="postgresql://username:password@ep-xxxx.region.aws.neon.tech/dbname?sslmode=require"
+DATABASE_URL="postgresql://username:password@ep-xxxx.region.aws.neon.tech/dbname?sslmode=verify-full"
 ```
+
+Use `sslmode=verify-full` instead of `sslmode=require` to avoid the `pg-connection-string` warning and keep full TLS hostname verification enabled. If your connection string already includes other query params such as `channel_binding=require`, keep them unchanged.
 
 ### Step 2: Generate Prisma Client and Run Migrations
 
