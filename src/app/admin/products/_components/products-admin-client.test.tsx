@@ -136,6 +136,25 @@ describe('ProductsAdminClient', () => {
     )
   })
 
+  it('includes default sortBy when toggling sort order from default url state', () => {
+    render(
+      <ProductsAdminClient
+        initialQuery={makeQuery({ sortBy: undefined, sortOrder: undefined })}
+        items={[makeProduct()]}
+        pageInfo={{ page: 2, limit: 20, totalItems: 30, totalPages: 2 }}
+      />,
+    )
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /sort order descending/i }),
+    )
+
+    expect(replaceMock).toHaveBeenCalledWith(
+      '/admin/products?search=keyboard&sortBy=updatedAt&sortOrder=asc',
+      { scroll: false },
+    )
+  })
+
   it('navigates to previous and next pages while preserving filters', () => {
     render(
       <ProductsAdminClient

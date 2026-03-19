@@ -122,6 +122,7 @@ export function ProductsAdminClient({
   function handleSortOrderToggle() {
     updateQuery(
       {
+        sortBy: iqSortBy ?? 'updatedAt',
         sortOrder: iqSortOrder === 'asc' ? 'desc' : 'asc',
       },
       true,
