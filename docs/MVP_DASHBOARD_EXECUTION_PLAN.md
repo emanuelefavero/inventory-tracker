@@ -172,6 +172,7 @@ For every step card below, maintain the following fields:
   - `src/app/admin/products/_components/products-empty-state.tsx`
   - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
   - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
+  - `package.json`
   - `docs/ARCHITECTURE.md`
   - `AGENTS.md`
   - `npm run test -- src/app/admin/products/page.test.tsx src/app/admin/products/_components/products-admin-client.test.tsx src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
@@ -183,7 +184,7 @@ For every step card below, maintain the following fields:
   - Phase 1 and Phase 2 are complete; detailed implementation history lives in the linked evidence and supporting step docs.
   - The admin products read path is server-first, role-gated, and uses shared query contracts from `src/lib/products/queries.ts`.
   - Invalid admin product query params now sanitize per field so malformed URLs fall back safely without dropping valid filters or crashing SSR.
-  - Targeted tests and scoped lint checks for the current Step 5 work have already passed per the evidence above.
+  - Local Git hooks now use Husky plus lint-staged to run Prettier only on staged files, which does not change app architecture or Step 5 scope.
   - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)

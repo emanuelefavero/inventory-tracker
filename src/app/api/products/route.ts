@@ -6,11 +6,11 @@ import {
 } from '@/lib/api/validation'
 import { requireAdmin, requireAuth } from '@/lib/auth-helpers'
 import prisma from '@/lib/prisma'
+import { listProducts } from '@/lib/products/queries'
 import {
   createProductBodySchema,
   listProductsQuerySchema,
 } from '@/lib/products/schemas'
-import { listProducts } from '@/lib/products/queries'
 
 /**
  * List products with pagination, optional search/category filters, and sorting.
