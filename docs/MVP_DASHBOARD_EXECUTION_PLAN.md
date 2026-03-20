@@ -147,6 +147,8 @@ For every step card below, maintain the following fields:
   - Admin can create, edit, delete, and list products.
   - Product table supports search/sort.
 - **Evidence**:
+  - `.github/workflows/ci.yml`
+  - `.github/workflows/e2e.yml`
   - `src/lib/products/client.ts`
   - `src/lib/products/queries.ts`
   - `src/lib/products/client.test.ts`
@@ -173,7 +175,8 @@ For every step card below, maintain the following fields:
   - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
   - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
 - **Notes**:
-  - Phase 1 and Phase 2 remain complete; current support work aligned Prisma CLI/client versions so generated imports resolve consistently in CI.
+  - Phase 1 and Phase 2 remain complete; CI support work now injects Clerk secrets into both workflows and runs Prisma generation before Playwright boots Next.js in E2E.
+  - GitHub Actions now fail fast on missing `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, or `CLERK_SECRET_KEY` instead of failing later during Next.js startup or build.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
 
