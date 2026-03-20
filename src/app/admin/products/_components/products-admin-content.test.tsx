@@ -26,14 +26,14 @@ describe('ProductsAdminContent', () => {
     })
 
     const result = await ProductsAdminContent({
-        query: {
-          search: '  keyboard  ',
-          sortBy: 'invalid',
-          sortOrder: 'down',
-          page: 'abc',
-          limit: '20',
-        },
-      })
+      query: {
+        search: '  keyboard  ',
+        sortBy: 'invalid',
+        sortOrder: 'down',
+        page: 'abc',
+        limit: '20',
+      },
+    })
 
     expect(listProductsMock).toHaveBeenCalledWith({
       search: 'keyboard',

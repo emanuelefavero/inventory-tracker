@@ -24,8 +24,8 @@ import { GET } from './route'
 describe('api/movements route handlers', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    prismaMock.$transaction.mockImplementation(async (operations: Promise<unknown>[]) =>
-      Promise.all(operations),
+    prismaMock.$transaction.mockImplementation(
+      async (operations: Promise<unknown>[]) => Promise.all(operations),
     )
   })
 
@@ -54,9 +54,13 @@ describe('api/movements route handlers', () => {
   })
 
   it('GET returns 401 AUTH_UNAUTHENTICATED when user is unauthenticated', async () => {
-    requireAuth.mockRejectedValue(new Error('Unauthorized: Authentication required'))
+    requireAuth.mockRejectedValue(
+      new Error('Unauthorized: Authentication required'),
+    )
 
-    const response = await GET(new Request('http://localhost:3000/api/movements'))
+    const response = await GET(
+      new Request('http://localhost:3000/api/movements'),
+    )
     const body = await response.json()
 
     expect(response.status).toBe(401)

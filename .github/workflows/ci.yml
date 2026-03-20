@@ -1,0 +1,72 @@
+name: ci
+
+# This workflow runs linting, formatting checks, builds the application, and runs unit tests. It is triggered on pull requests and pushes to the main branch.
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: true
+      NODE_ENV: test
+      NEXT_TELEMETRY_DISABLED: '1'
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Missing required GitHub Actions secret: DATABASE_URL" >&2
+            exit 1
+          fi
+          if [ -z "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" ]; then
+            echo "Missing required GitHub Actions secret: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" >&2
+            exit 1
+          fi
+          if [ -z "$CLERK_SECRET_KEY" ]; then
+            echo "Missing required GitHub Actions secret: CLERK_SECRET_KEY" >&2
+            exit 1
+          fi
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Check formatting
+        run: npm run checkformat
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build application
+        run: npm run build
+
+      - name: Run unit tests
+        run: npm run test

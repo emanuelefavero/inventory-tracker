@@ -147,6 +147,8 @@ For every step card below, maintain the following fields:
   - Admin can create, edit, delete, and list products.
   - Product table supports search/sort.
 - **Evidence**:
+  - `.github/workflows/ci.yml`
+  - `.github/workflows/e2e.yml`
   - `src/lib/products/client.ts`
   - `src/lib/products/queries.ts`
   - `src/lib/products/client.test.ts`
@@ -172,19 +174,9 @@ For every step card below, maintain the following fields:
   - `src/app/admin/products/_components/products-empty-state.tsx`
   - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
   - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
-  - `docs/ARCHITECTURE.md`
-  - `AGENTS.md`
-  - `npm run test -- src/app/admin/products/page.test.tsx src/app/admin/products/_components/products-admin-client.test.tsx src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
-  - `npm run test -- src/lib/products/client.test.ts src/app/api/products/route.test.ts`
-  - `npm run test`
-  - `npm run lint -- src/app/admin/products src/app/admin/products/_components src/app/admin/products/_store`
-  - `npm run lint`
 - **Notes**:
-  - Phase 1 and Phase 2 are complete; detailed implementation history lives in the linked evidence and supporting step docs.
-  - The admin products read path is server-first, role-gated, and uses shared query contracts from `src/lib/products/queries.ts`.
-  - Invalid admin product query params now sanitize per field so malformed URLs fall back safely without dropping valid filters or crashing SSR.
-  - Targeted tests and scoped lint checks for the current Step 5 work have already passed per the evidence above.
-  - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
+  - Phase 1 and Phase 2 remain complete; CI support work now injects Clerk secrets into both workflows and runs Prisma generation before Playwright boots Next.js in E2E.
+  - GitHub Actions now fail fast on missing `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, or `CLERK_SECRET_KEY` instead of failing later during Next.js startup or build.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
 
