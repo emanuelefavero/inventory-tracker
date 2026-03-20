@@ -172,20 +172,8 @@ For every step card below, maintain the following fields:
   - `src/app/admin/products/_components/products-empty-state.tsx`
   - `src/app/admin/products/_store/use-products-admin-ui-store.ts`
   - `src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
-  - `package.json`
-  - `docs/ARCHITECTURE.md`
-  - `AGENTS.md`
-  - `npm run test -- src/app/admin/products/page.test.tsx src/app/admin/products/_components/products-admin-client.test.tsx src/app/admin/products/_store/use-products-admin-ui-store.test.ts`
-  - `npm run test -- src/lib/products/client.test.ts src/app/api/products/route.test.ts`
-  - `npm run test`
-  - `npm run lint -- src/app/admin/products src/app/admin/products/_components src/app/admin/products/_store`
-  - `npm run lint`
 - **Notes**:
-  - Phase 1 and Phase 2 are complete; detailed implementation history lives in the linked evidence and supporting step docs.
-  - The admin products read path is server-first, role-gated, and uses shared query contracts from `src/lib/products/queries.ts`.
-  - Invalid admin product query params now sanitize per field so malformed URLs fall back safely without dropping valid filters or crashing SSR.
-  - Local Git hooks now use Husky plus lint-staged for staged-file formatting and a new pre-push gate for lint plus unit tests.
-  - Next work starts with Phase 3 (Create & Edit Mutations) and should stop at the next phase boundary unless explicitly expanded.
+  - Phase 1 and Phase 2 remain complete; current support work aligned Prisma CLI/client versions so generated imports resolve consistently in CI.
 
 #### Step 6 — Checkout/Return Movements (User + Admin)
 
